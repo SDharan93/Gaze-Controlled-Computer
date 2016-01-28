@@ -41,4 +41,4 @@ make run
 
 ## Acknowledgments
 
-* **April Khademi** - *Group Advisor* - Advisor and Mentor to the group. Provided amazing support to the group and motivated the group to strive for the best.
+* **Dr.April Khademi** - *Group Advisor* - Advisor and Mentor to the group. Provided amazing support to the group and motivated the group to strive for the best.
