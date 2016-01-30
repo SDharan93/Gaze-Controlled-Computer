@@ -17,7 +17,7 @@ To run the application correctly, please have the following available:
 
 To install the application, run the following:
 ```
-mod +x /path/to/yourscript.sh
+mod +x build.sh
 ```
 
 ```
@@ -26,9 +26,9 @@ mod +x /path/to/yourscript.sh
 
 ## Deployment
 
-To run the application, run the following:
+To run the application, run the following: -- Note we did not add executable yet, need to create
 ```
-make run
+./[executable]
 ```
 
 ## Built With
