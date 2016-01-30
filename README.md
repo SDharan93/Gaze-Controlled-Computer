@@ -17,7 +17,11 @@ To run the application correctly, please have the following available:
 
 To install the application, run the following:
 ```
-make install
+mod +x /path/to/yourscript.sh
+```
+
+```
+./build.sh
 ```
 
 ## Deployment
