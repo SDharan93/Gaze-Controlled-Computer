@@ -26,9 +26,9 @@ mod +x build.sh
 
 ## Deployment
 
-To run the application, run the following: -- Note we did not add executable yet, need to create
+To run the application, go to ./build/bin directory and run the following:
 ```
-./[executable]
+./gaze_controller
 ```
 
 ## Built With
