@@ -18,7 +18,7 @@ To run the application correctly, please have the following available:
 
 To install the application, run the following:
 ```
-mod +x build.sh
+chmod +x build.sh
 ```
 
 ```
