@@ -8,6 +8,7 @@ The gaze controlled mouse was primarily created for a proof of concept and shoul
 
 To run the application correctly, please have the following available: 
 * OpenCV
+* CMake (Version 2.8)
 * Camera
 * Linux Distro
 * (Sensor)
