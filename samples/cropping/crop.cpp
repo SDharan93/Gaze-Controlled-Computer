@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <stdio.h>
-#include <cmath>
+
 
 using namespace std;
 using namespace cv;
@@ -15,85 +15,90 @@ using namespace cv;
 CascadeClassifier face_cascade;
 CascadeClassifier eye_cascade;
 
-//function headers
-int* FaceDetect (Mat image);
-int* EyeDetect (Mat face_image);
 
-int main(int argc, char** argv) {
-  // Declaration of VARIABLES
-    Mat image, face_image, eyeimage;
+void DynamicCrop(){
+  Mat image, gray_image, face_image, eye_image;
+  std::vector <Rect> face_rect;  // a vector to store face coordinates
+  std::vector <Rect> eye_rect;  // a vector to store face coordinates
 
-    image = imread("./screenshot.jpg", 1); //reading the original image from the file
-    //imshow("image", image);   //displaying the image
+  VideoCapture capture;
 
-    //Loading the HARR cascade files
-    if ((!face_cascade.load("./haarcascade_frontalface_alt.xml") ) || (!eye_cascade.load("./haarcascade_eye_tree_eyeglasses.xml") ))
-     {
-      cout << "ERROR loading the the classifiers";
-      return 0;
-     }
-    else
-      cout << "loaded both classifiers" << endl;
+  capture.open(0);
+  //Exit if stream is not working
+  namedWindow( "Eye", WINDOW_NORMAL );
 
-    //calling on function to do face detection
-    int *facerect = FaceDetect(image);
 
-    //cropping to the face
-    face_image = image(Rect(facerect[0],facerect[1],facerect[2],facerect[3]));
-    imshow("face1", face_image);
+  if(!capture.isOpened())   { cout << "Capture is not working" << endl; return ;}
+  else{
+        for(;;)   {
+          capture >> image;
 
-    //calling on a function to do eye detection
-    int *eyerect = EyeDetect(face_image);
+          if(image.empty()) {break ;}
 
-    //cropping to the eye based on the face_image input
-    eyeimage = face_image(Rect(eyerect[0],eyerect[1],eyerect[2],eyerect[3]));
 
-    //Resizing the cropped eye image to twice the size
-    resize(eyeimage, eyeimage, eyeimage.size()*2, 0,0, INTER_NEAREST);
+            cvtColor( image, gray_image, COLOR_BGR2GRAY ); //converting image into gray_image
+            //equalizeHist( gray_image, gray_image ); //equalizing the histogram of gray_image
 
-    imshow("Eyes", eyeimage);
+            //identifying the face and croping the original image
+            face_cascade.detectMultiScale( gray_image, face_rect, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(100, 100) );
+            face_image = gray_image(Rect(face_rect[0].x, face_rect[0].y, face_rect[0].width, face_rect[0].height));
 
-    waitKey(0);  //need this or, the output images will be terminated too quickly
+            //identifying the eye and cropping the face image
+            eye_cascade.detectMultiScale( face_image, eye_rect, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
+            eye_image = face_image(Rect(eye_rect[0].x, eye_rect[0].y, eye_rect[0].width, eye_rect[0].height));
+
+            //Resizing the cropped eye image to twice the size
+            resize(eye_image, eye_image, eye_image.size()*2, 0,0, INTER_NEAREST);
+
+          imshow("Eye", eye_image);
+          if(waitKey(5) >= 0) {  break; }
+        }
+
+      }
 }
 
-//This method finds the location of the face and returns it to main
-int * FaceDetect (Mat image){
-   Mat gray_image;
-   std::vector<Rect> face;  // a vector to store face coordinates
-   int *facerect = new int [4];  //array that will be passed back to main
 
-   cvtColor( image, gray_image, COLOR_BGR2GRAY ); //converting image into gray_image
-   equalizeHist( gray_image, gray_image ); //equalizing the histogram of gray_image
 
-  //-- Detect a face
-  face_cascade.detectMultiScale( gray_image, face, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(100, 100) );
+void StaticCrop(){
+  Mat image, gray_image, face_image, eye_image;
+  std::vector <Rect> face_rect;  // a vector to store face coordinates
+  std::vector <Rect> eye_rect;  // a vector to store face coordinates
 
-  // storing the coordinates of the face
-  for( size_t i = 0; i < face.size(); i++ ){
-    facerect [0] = face[i].x ;
-    facerect [1] = face[i].y;
-    facerect [2] = face[i].width;
-    facerect [3] = face[i].height;
-  }
+  image = imread("./screenshot.jpg", 1); //reading the original image from the file
 
-  return facerect;
+  if (!image.empty()) {cout << "read the image" << endl;}
+
+  cvtColor( image, gray_image, COLOR_BGR2GRAY ); //converting image into gray_image
+  equalizeHist( gray_image, gray_image ); //equalizing the histogram of gray_image
+
+  //cropping to the face and saving it as a new image.
+  face_cascade.detectMultiScale( gray_image, face_rect, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(100, 100) );
+  face_image = gray_image(Rect(face_rect[0].x, face_rect[0].y, face_rect[0].width, face_rect[0].height));
+
+  //cropping to the eye and saving it as a new image;
+  eye_cascade.detectMultiScale( gray_image, eye_rect, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
+  eye_image = gray_image(Rect(eye_rect[0].x, eye_rect[0].y, eye_rect[0].width, eye_rect[0].height));
+
+  imshow("gray", eye_image);
+
+  waitKey(0);
 }
 
-//This method finds the location of the eys and returns it to main
-int * EyeDetect (Mat face_image){
-   std::vector<Rect> eyes;  // a vector to store face coordinates
-   int *eyerect = new int [4];  //array that will be passed back to main
 
-  //-- Detect eyes
-  eye_cascade.detectMultiScale( face_image, eyes, 1.1, 2, 0 |CASCADE_SCALE_IMAGE, Size(30, 30) );
 
-  // storing the coordinates of the eyes
-  for( size_t i = 0; i < eyes.size(); i++ ){
-    eyerect [0] = eyes[i].x ;
-    eyerect [1] = eyes[i].y;
-    eyerect [2] = eyes[i].width;
-    eyerect [3] = eyes[i].height;
-  }
+int main(int argc, char** argv){
 
-  return eyerect;
+//attempting to load the HAAR cascades for face and eye detection
+  if ((!face_cascade.load("./haarcascade_frontalface_alt.xml") ) || (!eye_cascade.load("./haarcascade_eye_tree_eyeglasses.xml") ))
+  {     cout << "ERROR loading the the classifiers";    return 0;   }
+
+
+
+//Call DynamicCrop to perform face and then eyedetcion on live camera stream
+   DynamicCrop();
+   
+//Call StaticCrop to perform face and then eyedetcion on still images
+  // StaticCrop();
+
+cout << "exiting" <<endl;
 }
