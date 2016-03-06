@@ -10,6 +10,21 @@ using namespace std;
 using namespace cv; 
 
 int main(int argc, char** argv) {
-    cout << "This is a stub" << endl;
+    string sourceName = "eye.jpg";
+    string sourceDisplay = "Source image";
     
+    Mat src = imread(sourceName);
+    //If the source image could not load...
+    if(!src.data) {
+       cout << "ERROR: could not load: " << sourceName << endl; 
+       return -1;
+    }
+
+    namedWindow(sourceDisplay, CV_WINDOW_AUTOSIZE);
+    imshow(sourceDisplay, src);
+    cout << "Press any key to exit" << endl;
+    
+    waitKey(0);
+
+    return 0;
 }
