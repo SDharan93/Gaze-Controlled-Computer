@@ -74,7 +74,7 @@ void StaticCrop(){
   //cropping to the face and saving it as a new image.
   face_cascade.detectMultiScale( gray_image, face_rect, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(100, 100) );
   face_image = gray_image(Rect(face_rect[0].x, face_rect[0].y, face_rect[0].width, face_rect[0].height));
-  
+
   //cropping to the eye and saving it as a new image;
   eye_cascade.detectMultiScale( gray_image, eye_rect, 1.1, 2, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
   eye_image = gray_image(Rect(eye_rect[0].x, eye_rect[0].y, eye_rect[0].width, eye_rect[0].height));
