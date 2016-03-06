@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
     imshow(sourceDisplay, src);
     cout << "Press any key to exit" << endl;
     
+    //Add input keys here
     waitKey(0);
 
     return 0;
