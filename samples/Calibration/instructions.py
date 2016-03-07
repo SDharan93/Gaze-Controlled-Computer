@@ -3,12 +3,15 @@
 class Instructions():
       def __init__(self):
           self.instruction = []
-          self.instruction.append("Initiating Calibration,   Click to proceed")
           self.instruction.append("Look at the TOP LEFT corner and left-click")
           self.instruction.append("Look at the TOP RIGHT corner and left-click")
-          self.instruction.append("Look at the BOTTOM LEFT corner and left-click")
           self.instruction.append("Look at the BOTTOM RIGHT corner and left-click")
+          self.instruction.append("Look at the BOTTOM LEFT corner and left-click")
           self.instruction.append("CALIBRATION COMPLETE, left-click to exit")
 
       def get_instrct(self, num):
           return (self.instruction[num])
+
+      def get_instrctSize(self):
+         temp =  len(self.instruction)
+         return temp
