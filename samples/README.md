@@ -3,3 +3,4 @@ The folder "cropping" contains the code that detects face and eye using HAAR cas
 
 Issues:
     -> the cascade switches between the left and the right eye, and thus the output stream window size is rapidly and noticeably resizing.
+    -> if there is insufficient light hitting the face, the classifiers will have trouble identifying the features, and thus throws exceptions
