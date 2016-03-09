@@ -20,7 +20,7 @@ void highlight_eye();
 int main( int argc, char** argv ) {
     VideoCapture cap;
     int input = 1;
-    int dilation_size = 2;
+    int dilation_size = 3;
 
     cap.open(0);
     if(!cap.isOpened()) {  // check if we succeeded
@@ -49,16 +49,18 @@ int main( int argc, char** argv ) {
 
         //blur image to elimnate unwanted edges.
         medianBlur(threshold_image, blur_image, 3);
+        /// Reduce the noise so we avoid false circle detection
+        //GaussianBlur( threshold_image, blur_image, Size(9, 9), 2, 2 );
 
         //use the canny filter
         Canny(blur_image, edge, 50, 150, 3);
 
         Mat element = getStructuringElement(2, Size(2 * dilation_size + 1, 2 * dilation_size + 1),
                   Point(dilation_size, dilation_size));     // dilation_type = MORPH_ELLIPSE
-        //dilate(edge, dilate_image, element);
+        dilate(edge, dilate_image, element);
 
         //morph to replace dilate
-        cv::morphologyEx(edge, dilate_image, MORPH_CLOSE, cv::noArray(),cv::Point(-1,-1),2);
+        //cv::morphologyEx(edge, dilate_image, MORPH_CLOSE, cv::noArray(),cv::Point(-1,-1),2);
         //thresh_callback(0,0);
         highlight_eye();
 
@@ -114,6 +116,8 @@ void highlight_eye() {
 
     //Fill in the holes for each contour
     drawContours(dilate_image, contours, -1, CV_RGB(255, 255, 255), CV_CHAIN_APPROX_SIMPLE);
+
+    //cv::HoughCircles( gray, circles, CV_HOUGH_GRADIENT, 1, 60);
 
     //go through every circle to look for the pupil
     for(int i = 0; i < contours.size(); i++) {
