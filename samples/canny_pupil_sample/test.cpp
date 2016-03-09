@@ -9,16 +9,16 @@
 using namespace cv;
 using namespace std;
 
+//Global Variables
+Mat src, video_src, gray_video_src, threshold_image, dilate_image, edge, blur_image;
+
 bool openCamera(VideoCapture cap);
 int userInput(int input);
 void thresh_callback(int, void*);
-
-//Global Variables
-Mat dilate_image;
+void highlight_eye();
 
 int main( int argc, char** argv ) {
     VideoCapture cap;
-    Mat src, video_src, gray_video_src, threshold_image, edge, blur;
     int input = 1;
     int dilation_size = 2;
 
@@ -32,22 +32,26 @@ int main( int argc, char** argv ) {
     namedWindow("Gray", 1);
     namedWindow("Threshold", 1);
     namedWindow("Canny",1);
-    namedWindow("blur", 1);
+    namedWindow("blur_image", 1);
     namedWindow("Dilation",1);
 
     while(input != 0) {
-        //stream video instance into matrix
-        cap >> video_src;
+        if(!src.data ) {
+            //stream video instance into matrix
+            cap >> video_src;
+        } else {
+            video_src = src;
+        }
 
         //turn video instance into gray image
         cvtColor(~video_src, gray_video_src, CV_BGR2GRAY);
         threshold(gray_video_src, threshold_image, 225, 255, THRESH_BINARY);
 
         //blur image to elimnate unwanted edges.
-        medianBlur(threshold_image, blur, 3);
+        medianBlur(threshold_image, blur_image, 3);
 
         //use the canny filter
-        Canny(blur, edge, 50, 150, 3);
+        Canny(blur_image, edge, 50, 150, 3);
 
         Mat element = getStructuringElement(2, Size(2 * dilation_size + 1, 2 * dilation_size + 1),
                   Point(dilation_size, dilation_size));     // dilation_type = MORPH_ELLIPSE
@@ -55,14 +59,15 @@ int main( int argc, char** argv ) {
 
         //morph to replace dilate
         cv::morphologyEx(edge, dilate_image, MORPH_CLOSE, cv::noArray(),cv::Point(-1,-1),2);
-        thresh_callback(0,0);
+        //thresh_callback(0,0);
+        highlight_eye();
 
         //show normal video instance
         imshow("Video", video_src);
         imshow("Gray", gray_video_src);
         imshow("Threshold", threshold_image);
         imshow("Canny", edge);
-        imshow("blur", blur);
+        imshow("blur_image", blur_image);
         imshow("Dilation", dilate_image);
         input = userInput(waitKey(10));
     }
@@ -97,8 +102,33 @@ void thresh_callback(int, void*)
         line(drawing, mc[i], mc[i], color, 1, 8, 0);
     }
 
-    namedWindow("Step 3: Mass Centers", CV_WINDOW_AUTOSIZE);
-    imshow("Step 3: Mass Centers", drawing);
+    //namedWindow("Step 3: Mass Centers", CV_WINDOW_AUTOSIZE);
+    //imshow("Step 3: Mass Centers", drawing);
+}
+
+void highlight_eye() {
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+
+    findContours( dilate_image.clone(), contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+    //Fill in the holes for each contour
+    drawContours(dilate_image, contours, -1, CV_RGB(255, 255, 255), CV_CHAIN_APPROX_SIMPLE);
+
+    //go through every circle to look for the pupil
+    for(int i = 0; i < contours.size(); i++) {
+        double area = contourArea(contours[i]);
+        Rect rect = boundingRect(contours[i]);
+        int radius = rect.width/2;
+
+        //look for round shapes
+        if(area >= 30 &&
+            abs(1 - ((double)rect.width / (double)rect.height)) <= 0.2 &&
+            abs(1 - (area / (CV_PI * pow(radius,2)))) <= 0.2)
+        {
+            circle(video_src, Point(rect.x + radius, rect.y + radius), radius, CV_RGB(255, 0, 0),2);
+        }
+    }
 }
 
 bool openCamera(VideoCapture cap) {
