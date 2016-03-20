@@ -45,6 +45,7 @@ int main( int argc, char** argv ) {
 
         //turn video instance into gray image
         cvtColor(~video_src, gray_video_src, CV_BGR2GRAY);
+        //cvtColor(video_src, gray_video_src, CV_BGR2GRAY);
         threshold(gray_video_src, threshold_image, 225, 255, THRESH_BINARY);
 
         //blur image to elimnate unwanted edges.

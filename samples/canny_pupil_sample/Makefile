@@ -7,4 +7,8 @@ test: test.o; $(CXX) $< -o $@ $(LDFLAGS)
 
 test.o: test.cpp; $(CXX) $< -o $@ $(CXXFLAGS)
 
+opti: opti.o; $(CXX) $< -o $@ $(LDFLAGS)
+
+opti.o: optimized.cpp; $(CXX) $< -o $@ $(CXXFLAGS)
+
 clean: ; rm -f test.o video.o video test
