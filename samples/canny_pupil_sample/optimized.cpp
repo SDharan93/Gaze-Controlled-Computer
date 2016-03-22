@@ -70,6 +70,10 @@ int main( int argc, char** argv) {
     while(input != 0) {
         //cap >> video_src;
         video_src = imread("image-13.png", CV_LOAD_IMAGE_UNCHANGED); 
+        //video_src = imread("Colour_Polarizer_Dark.png", CV_LOAD_IMAGE_UNCHANGED);
+        if(video_src.empty()) {
+            cout << "IMAGE DID NOT LOAD PROPERLY" << endl;
+        }
         //Split the RBG Channels
         split(video_src, rgb);
         //equalizeHist(rgb[2], rgb[2]);
@@ -176,7 +180,7 @@ void highlight_eye(Mat image) {
     findContours(image.clone(), contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
     //Fill in the holes for each contour
-    drawContours(eye_image, contours, -1, CV_RGB(255, 255, 255), CV_CHAIN_APPROX_SIMPLE);
+    drawContours(image.clone(), contours, -1, CV_RGB(255, 255, 255), CV_CHAIN_APPROX_SIMPLE);
     //drawContours(eye_image, contours, -1, CV_RGB(255, 255, 255), CV_FILLED);
 
     //cv::HoughCircles( gray, circles, CV_HOUGH_GRADIENT, 1, 60);
