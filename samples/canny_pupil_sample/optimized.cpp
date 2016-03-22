@@ -103,7 +103,7 @@ int main( int argc, char** argv) {
         Mat temp, light_image, divided_image, divided_image2;
         //medianBlur(eye_image, eye_image, 5);
         GaussianBlur( adapt_image, blur_image, Size(5, 5), 2, 2 );
-        blur(~eye_image, light_image, Size(151,151));
+        blur(~eye_image, light_image, Size(201,201));
         //divide(~eye_image, light_image, divided_image, 1, -1);
         subtract(~eye_image, light_image, divided_image);
         subtract(~eye_image, ~light_image, divided_image2);
@@ -188,7 +188,7 @@ void highlight_eye(Mat image) {
         int radius = rect.width/2;
 
         //look for round shapes
-        if(area >= 30 &&
+        if(area >= 60 &&
             abs(1 - ((double)rect.width / (double)rect.height)) <= 0.2 &&
             abs(1 - (area / (CV_PI * pow(radius,2)))) <= 0.2)
         {
@@ -198,7 +198,7 @@ void highlight_eye(Mat image) {
 
     vector<Vec3f> circles;
     HoughCircles(image.clone(), circles, HOUGH_GRADIENT, 1, 10,
-                 100, 30, 1, 30 // change the last two parameters
+                 100, 30, 1, 50 // change the last two parameters
                                 // (min_radius & max_radius) to detect larger circles
                  );
     for( size_t i = 0; i < circles.size(); i++ )
