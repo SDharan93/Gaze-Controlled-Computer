@@ -40,7 +40,7 @@ To run the application, go to ./build/bin directory and run the following:
 ## Authors
 
 * **Shane Dharan** - *Group Member* - ShaneDharan@gmail.com
-* **Jibin Jacob** - *Group Member* - 
+* **Jibin Jacob** - *Group Member* - jwighton@mail.uoguelph.ca
 * **Christopher Reid** - *Group Member* - 
 * **Jacob Wighton** - *Group Member* - 
 
