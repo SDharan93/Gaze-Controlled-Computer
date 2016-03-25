@@ -42,6 +42,7 @@ int main( int argc, char** argv) {
     VideoCapture cap;
     int input = 1;
     int dilation_size = 3;
+    int bigger = 6;
 
     cap.open(0);
     if(!cap.isOpened()) {
@@ -69,7 +70,7 @@ int main( int argc, char** argv) {
 
     while(input != 0) {
         //cap >> video_src;
-        video_src = imread("image-13.png", CV_LOAD_IMAGE_UNCHANGED); 
+        video_src = imread("image-11.png", CV_LOAD_IMAGE_UNCHANGED); 
         //video_src = imread("Colour_Polarizer_Dark.png", CV_LOAD_IMAGE_UNCHANGED);
         if(video_src.empty()) {
             cout << "IMAGE DID NOT LOAD PROPERLY" << endl;
@@ -106,36 +107,52 @@ int main( int argc, char** argv) {
         //Temp variables --
         Mat temp, light_image, divided_image, divided_image2;
         //medianBlur(eye_image, eye_image, 5);
-        GaussianBlur( adapt_image, blur_image, Size(5, 5), 2, 2 );
-        blur(~eye_image, light_image, Size(201,201));
-        //divide(~eye_image, light_image, divided_image, 1, -1);
-        subtract(~eye_image, light_image, divided_image);
+        GaussianBlur( eye_image, eye_image, Size(3, 3), 2, 2 );
+        blur(eye_image, light_image, Size(201,201));
+        divide(eye_image, light_image, divided_image, 1, -1);
+        
+        Mat histo;
+        double min=0, max=0;
+        minMaxLoc(histo, &min, &max, 0, 0);
+        cout << "Min is: " << min << endl << "Max is: " << max <<endl;
+        cout << "Number of channels in eye_image is: " << eye_image.channels() << endl;
+
+        divided_image = divided_image.mul(255);
+        //subtract(~eye_image, light_image, divided_image);
         subtract(~eye_image, ~light_image, divided_image2);
-        equalizeHist(divided_image, divided_image);
+        //equalizeHist(divided_image, divided_image);
+        divided_image = ~divided_image;
         equalizeHist(divided_image2, divided_image2);
-        //divided_image = ~eye_image.mul(light_image.inv());
+        //divided_image = ~eye_image.mul(~light_image);
+        //divided_image = divided_image.mul(255);
 
         Mat element = getStructuringElement(2, Size(2 * dilation_size + 1, 2 * dilation_size +1), Point(dilation_size, dilation_size));
+        Mat element2 = getStructuringElement(2, Size(2 * bigger + 1, 2 * bigger +1), Point(bigger, bigger));
         //dilate(edge, dilate_image, element);
-        morphologyEx( divided_image, divided_image, MORPH_OPEN , element );
-        morphologyEx( divided_image2, divided_image2, MORPH_OPEN , element );
+        //morphologyEx( divided_image, divided_image, MORPH_CLOSE , element );
+        //morphologyEx( divided_image2, divided_image2, MORPH_CLOSE , element2 );
+        //morphologyEx( divided_image, divided_image, MORPH_OPEN , element );
+        //morphologyEx( divided_image2, divided_image2, MORPH_OPEN , element2 );
 
-        adaptiveThreshold(divided_image2, adapt_image, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 15, -5);
-        threshold(divided_image2, otsu_image, 200, 255, CV_THRESH_BINARY | CV_THRESH_OTSU); 
-        threshold(divided_image2, threshold_image,240, 255, THRESH_BINARY);
+        adaptiveThreshold(divided_image, adapt_image, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 15, -5);
+        threshold(divided_image, otsu_image, 200, 255, CV_THRESH_BINARY | CV_THRESH_OTSU); 
+        threshold(divided_image, threshold_image,240, 255, THRESH_BINARY);
 
         //blur(adapt_image, blur_image, Size(7,7));
         //blur image to elimnate unwanted edges.
         medianBlur(adapt_image, blur_image, 7);
         /// Reduce the noise so we avoid false circle detection
         //GaussianBlur( adapt_image, blur_image, Size(15, 15), 2, 2 );
-        Canny(blur_image, edge, 7, 21, 3);
+        //Canny(blur_image, edge, 7, 21, 3);
         //Canny(adapt_image, edge, 40, 160, 3);
 
         //Mat element = getStructuringElement(2, Size(2 * dilation_size + 1, 2 * dilation_size +1), Point(dilation_size, dilation_size));
-        dilate(edge, dilate_image, element);
+        //dilate(blur_image, dilate_image, element);
         //morphologyEx( adapt_image, dilate_image, MORPH_TOPHAT , element );
-        highlight_eye(edge);
+        //morphologyEx( blur_image, dilate_image, MORPH_OPEN , element );
+        morphologyEx( blur_image, dilate_image, MORPH_CLOSE , element );
+        //highlight_eye(blur_image);
+        highlight_eye(dilate_image);
 
         //imshow(RED_WINDOW, rgb[2]);
         //imshow(GREEN_WINDOW, rgb[1]);
@@ -149,12 +166,12 @@ int main( int argc, char** argv) {
         //imshow(GRAY, gray_video_src);
         imshow(OTSU, otsu_image);
         imshow(THRESHOLD, threshold_image);
-        imshow(CANNY_WINDOW, edge);
+        //imshow(CANNY_WINDOW, edge);
         imshow(ADAPTIVE_NAME, adapt_image);
         imshow(LIGHT_NAME, light_image);
         imshow(DIVIDED_NAME, divided_image);
         imshow("DIVIDED IMAGE 2", divided_image2);
-        //imshow("DILATED IMAGE", dilate_image);
+        imshow("DILATED IMAGE", dilate_image);
         imshow(FILTER_NAME, blur_image);
 
         input = userInput(waitKey(10));
@@ -192,7 +209,7 @@ void highlight_eye(Mat image) {
         int radius = rect.width/2;
 
         //look for round shapes
-        if(area >= 60 &&
+        if(area >= 50 &&
             abs(1 - ((double)rect.width / (double)rect.height)) <= 0.2 &&
             abs(1 - (area / (CV_PI * pow(radius,2)))) <= 0.2)
         {
@@ -201,8 +218,8 @@ void highlight_eye(Mat image) {
     }
 
     vector<Vec3f> circles;
-    HoughCircles(image.clone(), circles, HOUGH_GRADIENT, 1, 10,
-                 100, 30, 1, 50 // change the last two parameters
+    /*HoughCircles(image.clone(), circles, HOUGH_GRADIENT, 1, 10,
+                 100, 30, 1, 45 // change the last two parameters
                                 // (min_radius & max_radius) to detect larger circles
                  );
     for( size_t i = 0; i < circles.size(); i++ )
@@ -210,7 +227,7 @@ void highlight_eye(Mat image) {
         Vec3i c = circles[i];
         circle( eye_image, Point(c[0], c[1]), c[2], Scalar(0,0,255), 3, LINE_AA);
         circle( eye_image, Point(c[0], c[1]), 2, Scalar(0,255,0), 3, LINE_AA);
-    }
+    }*/
 }
 
 
