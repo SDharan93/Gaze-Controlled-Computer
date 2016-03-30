@@ -11,8 +11,8 @@ To run the application correctly, please have the following available:
 * CMake (Version 2.8)
 * Camera
 * Linux Distro
-* (Sensor)
-* Dragonboard 410C
+* Flex sensor
+* Nvidia TK1 (Optional) 
 
 ## Installation
 
@@ -27,22 +27,22 @@ chmod +x build.sh
 
 ## Deployment
 
-To run the application, go to ./build/bin directory and run the following:
+To run the application, run the following:
 ```
-./gaze_controller
+./build/bin/gaze_controller
 ```
 
 ## Built With
 
 * OpenCV - Image Processing Library
-* Dragonboard 410C - Platform for detecting pupil
+* Nvidia TK1 - Platform for controlling mouse pointer with gaze
 
 ## Authors
 
 * **Shane Dharan** - *Group Member* - ShaneDharan@gmail.com
-* **Jibin Jacob** - *Group Member* - jwighton@mail.uoguelph.ca
+* **Jibin Jacob** - *Group Member* - 
 * **Christopher Reid** - *Group Member* - 
-* **Jacob Wighton** - *Group Member* - 
+* **Jacob Wighton** - *Group Member* - jwighton@mail.uoguelph.ca
 
 ## Acknowledgments
 
