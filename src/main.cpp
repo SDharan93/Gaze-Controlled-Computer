@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include "constants.hpp"
+#include "detect.hpp"
 
 using namespace cv;
 using namespace std; 
@@ -15,11 +16,15 @@ using namespace std;
 void initWindows();
 void displayWindows();
 int userInput(int input);
+void debug();
 
 Mat source;
+Detect camera; 
+bool debug_flag;
 
 int main(int argc, char** argv) {
     int input = 0;
+    debug_flag = false; 
 
     //Check if the user put any image input 
     if(argc > 0) {
@@ -28,10 +33,11 @@ int main(int argc, char** argv) {
     
     initWindows();
     while(input != CLOSE_PROGRAM) {
+        camera.capture_image();
         displayWindows();
+        debug();
         input = userInput(waitKey(10));
     }
-
     return 0;
 }
 
@@ -40,7 +46,19 @@ void initWindows() {
 }
 
 void displayWindows() {
-   imshow(IMAGE_WINDOW_NAME, source); 
+   //imshow(IMAGE_WINDOW_NAME, source); 
+}
+
+void destoryWindows() {
+    destroyAllWindows();
+}
+
+void debug() {
+    if(debug_flag) {
+        camera.display_windows();
+    } else {
+        camera.destroy_windows();
+    }
 }
 
 int userInput(int input) {
@@ -52,6 +70,8 @@ int userInput(int input) {
             return 99;
         }
         case 100: { //User has hit d key 
+            debug_flag = !debug_flag; 
+            
             return 100;
         }
     }
