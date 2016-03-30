@@ -76,9 +76,9 @@ bool Detect::findEye(String face_cascade_name, String eye_cascade_name) {
 }
 
 void Detect::display_windows() {
-    imshow("VIDEO CAPTURE", this->video_image);
+    imshow(VIDEO_WINDOW_NAME, video_image);
 }
 
 void Detect::destroy_windows() {
-    destroyWindow("VIDEO CAPTURE");
+    destroyWindow(VIDEO_WINDOW_NAME);
 }
