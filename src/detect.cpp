@@ -5,7 +5,7 @@ using namespace cv;
 using namespace std;
 
 Detect::Detect() {
-    this->cap.open(0);
+    cap.open(0);
 }
 
 Detect::Detect(int number) {
@@ -13,19 +13,19 @@ Detect::Detect(int number) {
 }
 
 Mat Detect::get_face_image() {
-    return this->face_image.clone(); 
+    return face_image.clone(); 
 }
 
 void Detect::set_face_image(Mat face) {
-   this->face_image = face.clone();  
+   face_image = face.clone();  
 }
 
 Mat Detect::get_eye_image() {
-    return this->eye_image.clone();
+    return eye_image.clone();
 }
 
 void Detect::set_eye_image(Mat eye) {
-    this->eye_image = eye.clone(); 
+    eye_image = eye.clone(); 
 }
 
 Mat Detect::get_video_image() {
@@ -51,7 +51,7 @@ bool Detect::findFace(String face_cascade_name) {
     Mat gray_image;
     vector<Mat> rgb;
 
-    split(this->video_image, rgb);
+    split(video_image, rgb);
     gray_image = rgb[2].clone();
 
     if(!face_cascade.load(face_cascade_name)) {
@@ -62,10 +62,10 @@ bool Detect::findFace(String face_cascade_name) {
     face_cascade.detectMultiScale(gray_image, faces_vector, 1.1, 2, 0|CASCADE_SCALE_IMAGE|CV_HAAR_FIND_BIGGEST_OBJECT, Size(30, 30));
     //if face was found.
     if(!faces_vector.empty()) {
-       this->face_image = gray_image(Rect(faces_vector[0].x, faces_vector[0].y, faces_vector[0].width, faces_vector[0].height));
+       face_image = gray_image(Rect(faces_vector[0].x, faces_vector[0].y, faces_vector[0].width, faces_vector[0].height));
        rectangle(video_image, faces_vector[0], CV_RGB(0, 255, 0), 1);
     } else {
-        cout << "COULD NOT FIND FACE THIS FRAME." << endl; 
+        cout << "COULD NOT FIND FACE IN THIS FRAME." << endl; 
         return false; 
     }
     return true; 
@@ -77,8 +77,13 @@ bool Detect::findEye(String face_cascade_name, String eye_cascade_name) {
 
 void Detect::display_windows() {
     imshow(VIDEO_WINDOW_NAME, video_image);
+    //make sure that the face image has some value 
+    if(!face_image.empty()) {
+        imshow(FACE_WINDOW_NAME, face_image);
+    }
 }
 
 void Detect::destroy_windows() {
     destroyWindow(VIDEO_WINDOW_NAME);
+    destroyWindow(FACE_WINDOW_NAME);
 }

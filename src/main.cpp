@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
     initWindows();
     while(input != CLOSE_PROGRAM) {
         camera.capture_image();
+        camera.findFace(FACE_CASCADE_NAME);     
         displayWindows();
         debug();
         input = userInput(waitKey(10));
@@ -71,7 +72,6 @@ int userInput(int input) {
         }
         case 100: { //User has hit d key 
             debug_flag = !debug_flag; 
-            
             return 100;
         }
     }
