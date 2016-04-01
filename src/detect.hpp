@@ -31,7 +31,7 @@ class Detect {
         bool findFace(String face_cascade_name);
         
         //function call for finding eye from the face image. If eye cannot be found false is returned, else true. 
-        bool findEye(String face_cascade_name, String eye_cascade_name);
+        bool findEye(String eye_cascade_name);
 
         //function to grab image from camera. If there is an issue, return false, else true. 
         bool capture_image();

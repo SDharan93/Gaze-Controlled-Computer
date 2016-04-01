@@ -4,6 +4,8 @@
 using namespace cv;
 using namespace std;
 
+bool cascade_search(String name, Mat video_image, Mat gray_image, int size, Mat saved_image);
+
 Detect::Detect() {
     cap.open(0);
 }
@@ -71,8 +73,33 @@ bool Detect::findFace(String face_cascade_name) {
     return true; 
 }
 
-bool Detect::findEye(String face_cascade_name, String eye_cascade_name) {
+bool Detect::findEye(String eye_cascade_name) {
+    if(cascade_search(eye_cascade_name, video_image, face_image, 30, eye_image)){
+        return true; 
+    }
+    return false;
+}
 
+bool cascade_search(String name, Mat video_image, Mat gray_image, int size, Mat saved_image) {
+    CascadeClassifier cascade;
+    vector<Rect> cascade_vec;
+    //Mat result;
+
+    if(!cascade.load(name)) {
+        cout << "ERROR: could not load face classifier" << endl;
+        return false;
+    }
+
+    cascade.detectMultiScale(gray_image, cascade_vec, 1.1, 2, 0|CASCADE_SCALE_IMAGE|CV_HAAR_FIND_BIGGEST_OBJECT, Size(size, size));
+    //if face was found.
+    if(!cascade_vec.empty()) {
+       saved_image = gray_image(Rect(cascade_vec[0].x, cascade_vec[0].y, cascade_vec[0].width, cascade_vec[0].height));
+       rectangle(video_image, cascade_vec[0], CV_RGB(0, 255, 0), 1);
+    } else {
+        cout << "COULD NOT FIND FACE IN THIS FRAME." << endl; 
+        return false; 
+    }
+    return true;
 }
 
 void Detect::display_windows() {
@@ -81,9 +108,14 @@ void Detect::display_windows() {
     if(!face_image.empty()) {
         imshow(FACE_WINDOW_NAME, face_image);
     }
+
+    if(!eye_image.empty()) {
+        imshow(EYE_WINDOW_NAME, eye_image);
+    }
 }
 
 void Detect::destroy_windows() {
     destroyWindow(VIDEO_WINDOW_NAME);
     destroyWindow(FACE_WINDOW_NAME);
+    destroyWindow(EYE_WINDOW_NAME);
 }
