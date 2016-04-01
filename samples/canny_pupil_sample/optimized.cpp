@@ -37,6 +37,7 @@ vector<Rect> eyes;
 
 int userInput(int input);
 void highlight_eye(Mat image);
+int find_peak(Mat image);
 int main( int argc, char** argv) {
 
     VideoCapture cap;
@@ -70,7 +71,7 @@ int main( int argc, char** argv) {
 
     while(input != 0) {
         //cap >> video_src;
-        video_src = imread("image-11.png", CV_LOAD_IMAGE_UNCHANGED); 
+        video_src = imread("image-10.png", CV_LOAD_IMAGE_UNCHANGED); 
         //video_src = imread("Colour_Polarizer_Dark.png", CV_LOAD_IMAGE_UNCHANGED);
         if(video_src.empty()) {
             cout << "IMAGE DID NOT LOAD PROPERLY" << endl;
@@ -111,18 +112,16 @@ int main( int argc, char** argv) {
         blur(eye_image, light_image, Size(201,201));
         divide(eye_image, light_image, divided_image, 1, -1);
         
-        Mat histo;
-        double min=0, max=0;
-        minMaxLoc(histo, &min, &max, 0, 0);
-        cout << "Min is: " << min << endl << "Max is: " << max <<endl;
-        cout << "Number of channels in eye_image is: " << eye_image.channels() << endl;
+        imwrite("cropped_eye.png", eye_image);
 
-        divided_image = divided_image.mul(255);
+        Mat no_light;
+        Mat eq_divided;
+        int peak_number = find_peak(eye_image);
+        no_light = divided_image.mul(peak_number);
         //subtract(~eye_image, light_image, divided_image);
-        subtract(~eye_image, ~light_image, divided_image2);
         //equalizeHist(divided_image, divided_image);
-        divided_image = ~divided_image;
-        equalizeHist(divided_image2, divided_image2);
+        divided_image = ~no_light;
+        equalizeHist(no_light, eq_divided);
         //divided_image = ~eye_image.mul(~light_image);
         //divided_image = divided_image.mul(255);
 
@@ -149,7 +148,7 @@ int main( int argc, char** argv) {
         //Mat element = getStructuringElement(2, Size(2 * dilation_size + 1, 2 * dilation_size +1), Point(dilation_size, dilation_size));
         //dilate(blur_image, dilate_image, element);
         //morphologyEx( adapt_image, dilate_image, MORPH_TOPHAT , element );
-        //morphologyEx( blur_image, dilate_image, MORPH_OPEN , element );
+        morphologyEx( blur_image, dilate_image, MORPH_OPEN , element );
         morphologyEx( blur_image, dilate_image, MORPH_CLOSE , element );
         //highlight_eye(blur_image);
         highlight_eye(dilate_image);
@@ -158,7 +157,10 @@ int main( int argc, char** argv) {
         //imshow(GREEN_WINDOW, rgb[1]);
         //imshow(BLUE_WINDOW, rgb[0]);
         imshow("FACE", face_image);
+
         imshow("EYE", eye_image);
+        imwrite( "final_Image.jpg", eye_image);
+
         imshow(SOURCE,video_src);
         imshow(GRAY, gray_video_src);
         //imshow("INV GRAY VIDEO", temp);
@@ -167,12 +169,25 @@ int main( int argc, char** argv) {
         imshow(OTSU, otsu_image);
         imshow(THRESHOLD, threshold_image);
         //imshow(CANNY_WINDOW, edge);
+
         imshow(ADAPTIVE_NAME, adapt_image);
+        imwrite("Threshold_image.png", adapt_image);
+
         imshow(LIGHT_NAME, light_image);
-        imshow(DIVIDED_NAME, divided_image);
-        imshow("DIVIDED IMAGE 2", divided_image2);
+
+        imshow("inverted light elimination", divided_image);
+        imwrite("inv_light_elim_image.png", divided_image);
+
+        imshow("inverted equalized image", ~eq_divided);
+        imwrite("inverted_eq_image.png", ~eq_divided);
+
         imshow("DILATED IMAGE", dilate_image);
+        imwrite("cleaned_image.png", dilate_image);
+
         imshow(FILTER_NAME, blur_image);
+
+        imshow("LIGHT ELIMINATION", no_light);
+        imwrite("light_elimination.png", no_light);
 
         input = userInput(waitKey(10));
   }
@@ -188,6 +203,32 @@ int userInput(int input) {
             return 1;
         }
     }
+}
+
+int find_peak(Mat image) {
+    //Initialize parameters
+    int histSize = 256;    // bin size
+    float range[] = { 0, 255 };
+    const float *ranges[] = { range };
+                 
+    // Calculate histogram
+    MatND hist;
+    calcHist( &image, 1, 0, Mat(), hist, 1, &histSize, ranges, true, false );
+    // Show the calculated histogram in command window
+    double total;
+    float highest = 0;  
+    int index = 0;
+    total =image.rows *image.cols;
+    for( int h = 0; h < histSize; h++ ) {
+        float binVal = hist.at<float>(h);
+        if(binVal > highest) {
+            highest = binVal;
+            index = h;
+        }
+        //cout<<"binVal: "<<binVal << "index: " << h;
+    }
+    //cout << "index is: " << index << endl;
+    return index;
 }
 
 void highlight_eye(Mat image) {
