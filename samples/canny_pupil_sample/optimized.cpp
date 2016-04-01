@@ -35,6 +35,7 @@ vector<Mat> rgb;
 vector<Rect> faces;
 vector<Rect> eyes;
 
+//functions
 int userInput(int input);
 void highlight_eye(Mat image);
 int find_peak(Mat image);
