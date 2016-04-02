@@ -34,7 +34,8 @@ int main(int argc, char** argv) {
     initWindows();
     while(input != CLOSE_PROGRAM) {
         camera.capture_image();
-        camera.findFace(FACE_CASCADE_NAME);     
+        //camera.findEye(EYE_CASCADE_NAME);
+        camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
         displayWindows();
         debug();
         input = userInput(waitKey(10));
