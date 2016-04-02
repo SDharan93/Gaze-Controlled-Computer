@@ -4,6 +4,8 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/objdetect.hpp>
 
+#include "v4ldevice.h"
+
 #include <iostream>
 
 using namespace cv; 
@@ -25,7 +27,7 @@ class Detect {
         //Constructors
         Detect();
 
-        Detect(int number);
+        Detect(char* location, int width, int height);
         
         //function call for finding face. If face cannot be found, false is returned. If it is found, it will return true.
         bool findFace(String face_cascade_name);
@@ -56,6 +58,7 @@ class Detect {
         vector<Rect> eyes_vector;
 
         VideoCapture cap; 
+        Size imageSize;
 
         CascadeClassifier face_cascade;
         CascadeClassifier eye_cascade;

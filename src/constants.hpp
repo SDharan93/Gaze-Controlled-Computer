@@ -21,3 +21,5 @@ static String EYE_CASCADE_NAME = "res/haarcascade_eye_tree_eyeglasses.xml";
 static int CLOSE_PROGRAM = 27; //esc
 static int DEBUG_WINDOWS = 100; //d
 static int CLOSE_WINDOWS = 99; //c
+
+static float alpha = 1.0625;

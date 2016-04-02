@@ -11,8 +11,13 @@ Detect::Detect() {
     cap.open(0);
 }
 
-Detect::Detect(int number) {
-    cap.open(number);
+Detect::Detect(char* location, int width, int height) {
+    open_device(location);
+    imageSize.width = width; 
+    imageSize.height = height;
+
+    init_device(width, height);
+    start_capturing();
 }
 
 Mat Detect::get_face_image() {
@@ -52,7 +57,17 @@ bool Detect::capture_image() {
 
 //TODO: Implement the capture method for TK1 board.
 bool Detect::nv_capture_image() {
-    return false;
+    Mat input, conversion, demosiac;
+
+    input = Mat(imageSize, CV_16UC1, snapFrame());
+    input.convertTo(conversion, CV_8UC4, alpha);
+    demosaicing(conversion, video_image, COLOR_BayerBG2RGB); 
+
+    if(video_image.empty()) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 bool Detect::findFace(String face_cascade_name) {
