@@ -60,6 +60,7 @@ bool Detect::nv_capture_image() {
     Mat input, conversion, demosiac;
 
     input = Mat(imageSize, CV_16UC1, snapFrame());
+    //waitKey(75);
     input.convertTo(conversion, CV_8UC4, alpha);
     demosaicing(conversion, video_image, COLOR_BayerBG2RGB); 
 
@@ -146,10 +147,10 @@ Mat cascade_search(String name, Mat video_image, Mat search_image, int size, Mat
             result = search_image(Rect(cascade_vec[0].x, cascade_vec[0].y, cascade_vec[0].width, cascade_vec[0].height)).clone();
             rectangle(video_image, cascade_vec[0], CV_RGB(0, 255, 0), 1);
         } else {
-            cout << "COULD NOT FIND FACE IN THIS FRAME." << endl; 
+            cout << "COULD NOT FIND FEATURE IN THIS FRAME." << endl; 
         }    
     } else {
-        cout << "ERROR: could not load face classifier" << endl;
+        cout << "ERROR: could not load feature classifier" << endl;
     }
     return result;
 }

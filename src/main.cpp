@@ -15,7 +15,8 @@ using namespace std;
 
 void initWindows();
 void displayWindows();
-int userInput(int input);
+void destroyWindows();
+int userInput(char input);
 void debug();
 
 Mat source;
@@ -24,24 +25,24 @@ bool debug_flag;
 
 int main(int argc, char** argv) {
     int input = 0;
-    debug_flag = false; 
-
-    //Check if the user put any image input 
-    if(argc > 0) {
-        source = imread(argv[1]);    
-    }
+    debug_flag = true; 
     
     initWindows();
     while(input != CLOSE_PROGRAM) {
-        camera.capture_image();
-        //camera.findEye(EYE_CASCADE_NAME);
-        camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
+        if(DEBUG.compare(argv[1]) == 0) {
+            camera.capture_image();
+        } 
+        camera.findEye(EYE_CASCADE_NAME);
+        //camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
         displayWindows();
         debug();
-        input = userInput(waitKey(10));
+        char input_char = (static_cast<char>(waitKey(75)));
+        input = userInput(input_char);
     }
     return 0;
 }
+
+
 
 void initWindows() {
     namedWindow(IMAGE_WINDOW_NAME, 1);
@@ -63,15 +64,15 @@ void debug() {
     }
 }
 
-int userInput(int input) {
+int userInput(char input) {
     switch(input) {
         case 27: { //User has hit esc key
             return 27;
         }
-        case 99: { //User has hit the c key 
+        case 'c': { //User has hit the c key 
             return 99;
         }
-        case 100: { //User has hit d key 
+        case 'd': { //User has hit d key 
             debug_flag = !debug_flag; 
             return 100;
         }

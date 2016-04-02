@@ -18,6 +18,8 @@ static String FACE_WINDOW_NAME = "Face Window";
 static String FACE_CASCADE_NAME = "res/haarcascade_frontalface_alt.xml";
 static String EYE_CASCADE_NAME = "res/haarcascade_eye_tree_eyeglasses.xml";
 
+static string DEBUG = "debug";
+
 static int CLOSE_PROGRAM = 27; //esc
 static int DEBUG_WINDOWS = 100; //d
 static int CLOSE_WINDOWS = 99; //c
