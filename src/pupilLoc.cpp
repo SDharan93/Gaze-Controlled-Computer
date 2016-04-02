@@ -40,7 +40,7 @@ void PupilLoc::removeLight() {
     Mat light, divided_image, temp, contrast; 
 
     //equalizeHist(ref_image, contrast);
-    GaussianBlur(contrast, temp, Size(3,3), 2, 2);
+    GaussianBlur(ref_image, temp, Size(3,3), 2, 2);
     blur(temp, light, Size(191, 191));
     imshow("LIGHT WINDOW", light);
     divide(ref_image, light, divided_image, 1, -1); 
@@ -75,6 +75,13 @@ void PupilLoc::highlightPupil() {
         if(area >=50 && abs(1 - ((double)rect.width / (double)rect.height)) <= 0.2 && abs( 1 - (area/(CV_PI * pow(radius,2)))) <= 0.2) {
     circle(ref_image, Point(rect.x+radius, rect.y+radius), radius, CV_RGB(255,0,0),2);
         }
+    }
+    
+    HoughCircles(ref_image.clone(), circles, HOUGH_GRADIENT, 1, 10, 100, 30, 1, 50);
+    for(size_t i = 0; i < circles.size(); i++) {
+        Vec3i c = circles[i];
+        circle(ref_image, Point(c[0], c[1]), c[2], Scalar(0,0,255), 3, LINE_AA);
+        circle(ref_image, Point(c[0], c[1]), 2, Scalar(0,255,0), 3, LINE_AA);
     }
 }
 

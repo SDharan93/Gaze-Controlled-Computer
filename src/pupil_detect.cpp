@@ -53,8 +53,8 @@ void run_pupil_detection(int argc, char** argv) {
 
 void debug_runnable(Detect camera) {
     camera.capture_image();
-    //camera.findEye(EYE_CASCADE_NAME);
-    camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
+    camera.findEye(EYE_CASCADE_NAME);
+    //camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
     Mat eye_image = camera.get_eye_image();
 
     if(!eye_image.empty()) {
