@@ -4,6 +4,9 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/objdetect.hpp>
 
+#include <iostream>
+#include <cmath>
+
 //Contains the global variables for the program. 
 using namespace cv; 
 using namespace std; 
