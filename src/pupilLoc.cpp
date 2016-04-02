@@ -46,8 +46,8 @@ void PupilLoc::removeLight() {
     divide(ref_image, light, divided_image, 1, -1); 
     histoPeakIndex = histoPeak(ref_image);
     cout << "peak in histo: " << histoPeakIndex << endl;
-    illuminationRM = divided_image.mul(255);
-    //equalizeHist(illuminationRM, illuminationRM);
+    illuminationRM = divided_image.mul(histoPeakIndex);
+    equalizeHist(illuminationRM, illuminationRM);
 }
 
 void PupilLoc::isoPupil() {
@@ -62,8 +62,10 @@ void PupilLoc::highlightPupil() {
     vector< vector<Point> > contours; 
     vector<Vec4i> hierarchy; 
     vector<Vec3f> circles;
+    fstream myfile;
+    myfile.open ("coordinates.txt");
 
-    findContours(result_image.clone(), contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0,0));
+    findContours(result_image, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0,0));
 
     //go through every contour 
     for(int i=0; i<contours.size(); i++) {
@@ -73,7 +75,10 @@ void PupilLoc::highlightPupil() {
 
         //search if any contour is circular. 
         if(area >=50 && abs(1 - ((double)rect.width / (double)rect.height)) <= 0.2 && abs( 1 - (area/(CV_PI * pow(radius,2)))) <= 0.2) {
-    circle(ref_image, Point(rect.x+radius, rect.y+radius), radius, CV_RGB(255,0,0),2);
+            circle(ref_image, Point(rect.x+radius, rect.y+radius), radius, CV_RGB(255,0,0),2);
+
+            //this is temporary, but writes to file for gaze.
+            myfile << rect.x+radius << rect.y+radius << endl;
         }
     }
     
@@ -81,8 +86,13 @@ void PupilLoc::highlightPupil() {
     for(size_t i = 0; i < circles.size(); i++) {
         Vec3i c = circles[i];
         circle(ref_image, Point(c[0], c[1]), c[2], Scalar(0,0,255), 3, LINE_AA);
+        
+        //this is temporary, but writes to file for gaze.
+        myfile << c[0] << " " << c[1] << endl;
+
         circle(ref_image, Point(c[0], c[1]), 2, Scalar(0,255,0), 3, LINE_AA);
     }
+    myfile.close();
 }
 
 void PupilLoc::display_windows() {

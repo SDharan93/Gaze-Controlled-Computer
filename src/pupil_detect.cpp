@@ -1,12 +1,4 @@
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/videoio.hpp>
-#include <opencv2/objdetect.hpp>
-
-#include <iostream>
-#include <cmath>
-
+#include "pupil_detect.hpp"
 #include "detect.hpp"
 #include "pupilLoc.hpp"
 
@@ -21,14 +13,26 @@ int userInput(char input);
 void debug(Detect camera, PupilLoc pupil);
 void debug(Detect camera);
 Detect factory_detect(bool debug);
-void debug_runnable(Detect camera);
-void tk1_runnable(Detect camera);
+void debug_runnable(Detect camera, Mat result);
+void tk1_runnable(Detect camera, Mat result);
 
 Mat source;
 bool debug_flag;
 bool tk1_flag;
 
-void run_pupil_detection(int argc, char** argv) {
+PupilDetect::PupilDetect() {
+    pupil_flag = false;
+}
+
+Mat PupilDetect::get_result() {
+    return resultingImage;
+}
+
+bool PupilDetect::isPupil() {
+    return pupil_flag;
+}
+
+void PupilDetect::run_pupil_detection(int argc, char** argv) {
     int input = 0;
     debug_flag = false; 
     tk1_flag = true; 
@@ -42,16 +46,16 @@ void run_pupil_detection(int argc, char** argv) {
 
     while(input != CLOSE_PROGRAM) {
         if(tk1_flag) {
-            tk1_runnable(camera);
+            tk1_runnable(camera, resultingImage);
         } else {
-            debug_runnable(camera);
+            debug_runnable(camera, resultingImage);
         }
         char input_char = (static_cast<char>(waitKey(75)));
         input = userInput(input_char);
     }
 }
 
-void debug_runnable(Detect camera) {
+void debug_runnable(Detect camera, Mat result) {
     camera.capture_image();
     camera.findEye(EYE_CASCADE_NAME);
     //camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
@@ -62,6 +66,7 @@ void debug_runnable(Detect camera) {
         locatePupil.removeLight();
         locatePupil.isoPupil();
         locatePupil.highlightPupil();
+        result = locatePupil.get_result_image().clone();
         displayWindows(camera, locatePupil);
         debug(camera, locatePupil);
     } else {
@@ -70,7 +75,7 @@ void debug_runnable(Detect camera) {
     }
 }
 
-void tk1_runnable(Detect camera) {
+void tk1_runnable(Detect camera, Mat result) {
     camera.nv_capture_image();
     camera.findEye(EYE_CASCADE_NAME);
     //camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
@@ -81,6 +86,7 @@ void tk1_runnable(Detect camera) {
         locatePupil.removeLight();
         locatePupil.isoPupil();
         locatePupil.highlightPupil();
+        result = locatePupil.get_result_image().clone();
         displayWindows(camera, locatePupil);
         debug(camera, locatePupil);
     } else {

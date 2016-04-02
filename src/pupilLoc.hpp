@@ -1,5 +1,6 @@
 #include "constants.hpp"
 #include <iostream>
+#include <fstream>
 
 using namespace cv;
 using namespace std; 
