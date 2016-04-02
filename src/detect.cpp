@@ -11,8 +11,8 @@ Detect::Detect() {
     cap.open(0);
 }
 
-Detect::Detect(char* location, int width, int height) {
-    open_device(location);
+Detect::Detect(char* dest, int width, int height) {
+    open_device(dest);
     imageSize.width = width; 
     imageSize.height = height;
 

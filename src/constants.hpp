@@ -19,6 +19,9 @@ static String FACE_CASCADE_NAME = "res/haarcascade_frontalface_alt.xml";
 static String EYE_CASCADE_NAME = "res/haarcascade_eye_tree_eyeglasses.xml";
 
 static string DEBUG = "debug";
+static char* LOCATION = "/dev/video0";
+static int WIDTH = 1280;
+static int HEIGHT = 720;
 
 static int CLOSE_PROGRAM = 27; //esc
 static int DEBUG_WINDOWS = 100; //d
