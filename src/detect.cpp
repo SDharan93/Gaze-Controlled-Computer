@@ -59,10 +59,15 @@ bool Detect::capture_image() {
 bool Detect::nv_capture_image() {
     Mat input, conversion, demosiac;
 
+    Rect myROI(320, 10, 720, 300);
+
     input = Mat(imageSize, CV_16UC1, snapFrame());
-    //waitKey(75);
+    waitKey(75);
     input.convertTo(conversion, CV_8UC4, alpha);
-    demosaicing(conversion, video_image, COLOR_BayerBG2RGB); 
+    conversion = conversion(myROI); 
+    
+    demosaicing(conversion, video_image, COLOR_BayerBG2RGB);
+    flip(video_image, video_image, 1); 
 
     if(video_image.empty()) {
         return false;

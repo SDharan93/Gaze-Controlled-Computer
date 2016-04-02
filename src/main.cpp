@@ -30,10 +30,11 @@ int main(int argc, char** argv) {
     int input = 0;
     debug_flag = false; 
     tk1_flag = true; 
-    
     initWindows();
-    if(DEBUG.compare(argv[1]) == 0) {
-        tk1_flag = false;
+    if(argc > 1){
+    	if(DEBUG.compare(argv[1]) == 0) {
+        	tk1_flag = false;
+    	}
     }
     Detect camera = factory_detect(tk1_flag);
 
