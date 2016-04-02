@@ -6,12 +6,15 @@
 
 #include <iostream>
 #include <cmath>
+#include <stdio.h>
+#include "v4ldevice.h"
+#include<time.h>
 
 using namespace cv; 
 using namespace std; 
 
 //Global variables 
-Mat src, video_src, gray_video_src, otsu_image, threshold_image, dilate_image, edge, blur_image, face_image, eye_image, inv_gray_video, adapt_image;
+Mat src, video_src, image, gray_video_src, demosaic, otsu_image, threshold_image, dilate_image, edge, blur_image, face_image, eye_image, inv_gray_video, adapt_image;
 
 static String SOURCE = "Video Source";
 static String GRAY = "GRAY VIDEO";
@@ -36,44 +39,77 @@ vector<Rect> faces;
 vector<Rect> eyes;
 
 //functions
-int userInput(int input);
+//int userInput(int input);
 void highlight_eye(Mat image);
 int find_peak(Mat image);
 int main( int argc, char** argv) {
 
-    VideoCapture cap;
-    int input = 1;
+    //VideoCapture cap;
+    int wKey = -1;
+    //int input = 1;
     int dilation_size = 3;
     int bigger = 6;
+    //Start and end times
+    time_t start,end;
+    // Set Camera Resolution
+    Size ImageSize;
+    ImageSize.width = 1280;
+    ImageSize.height = 720;
+    // Set Camera Resolution
+    Size EyeSize;
+    EyeSize.width = 70;
+    EyeSize.height = 70;
 
-    cap.open(0);
-    if(!cap.isOpened()) {
-        return -1;
-    }
+    //cap.open(0);
+    //if(!cap.isOpened()) {
+    //    return -1;
+    //}
+    // Open and Initialize Camera
+    open_device((char*)"/dev/video0");    
+    init_device(ImageSize.width, ImageSize.height);
+    // Start the Camera Capture Sequence
+    start_capturing();
 
-    namedWindow(SOURCE, 1);
-    namedWindow(GRAY, 1);
-    namedWindow("INV GRAY VIDEO", 1);
+
+    //namedWindow(SOURCE, 1);
+    //namedWindow(GRAY, 1);
+   // namedWindow("INV GRAY VIDEO", 1);
     //namedWindow(THRESHOLD, 1);
-    namedWindow(OTSU, 1);
+    //namedWindow(OTSU, 1);
     //namedWindow(CANNY_WINDOW,1);
-    namedWindow(ADAPTIVE_NAME, 1);
-    namedWindow(LIGHT_NAME, 1);
-    namedWindow(FILTER_NAME, 1);
+    //namedWindow(ADAPTIVE_NAME, 1);
+    //namedWindow(LIGHT_NAME, 1);
+    //namedWindow(FILTER_NAME, 1);
 
-    resizeWindow("INV GRAY VIDEO", 500, 500);
-    resizeWindow(SOURCE, 500, 500);
-    resizeWindow(OTSU, 500, 500);
-    resizeWindow(GRAY, 500, 500);
-    resizeWindow("FACE", 500, 500);
-    resizeWindow(ADAPTIVE_NAME, 500, 500);
-    resizeWindow(LIGHT_NAME, 500, 500);
-    resizeWindow(FILTER_NAME, 500, 500);
+    //resizeWindow("INV GRAY VIDEO", 500, 500);
+   // resizeWindow(SOURCE, 500, 500);
+   // resizeWindow(OTSU, 500, 500);
+   // resizeWindow(GRAY, 500, 500);
+    //resizeWindow("FACE", 500, 500);
+    //resizeWindow(ADAPTIVE_NAME, 500, 500);
+    //resizeWindow(LIGHT_NAME, 500, 500);
+   // resizeWindow(FILTER_NAME, 500, 500);
 
-    while(input != 0) {
+	//Start the clock
+	time(&start);
+	int counter=0;
+	double sec = 0;
+	double fps = 0;
+
+	// Setup a rectangle to define your region of interest
+	Rect myROI(200, 10, 700, 300);
+
+    while(wKey == -1) {
         //cap >> video_src;
-        video_src = imread("image-10.png", CV_LOAD_IMAGE_UNCHANGED); 
+        //video_src = imread("image-10.png", CV_LOAD_IMAGE_UNCHANGED); 
         //video_src = imread("Colour_Polarizer_Dark.png", CV_LOAD_IMAGE_UNCHANGED);
+	src = Mat(ImageSize, CV_16UC1, snapFrame());
+	waitKey(75);
+	src.convertTo(image, CV_8UC4, 1.0625);
+	Mat demosaic = image(myROI);
+	// Demosaic frame for RGB Values
+	demosaicing(demosaic,video_src,COLOR_BayerBG2RGB);
+
         if(video_src.empty()) {
             cout << "IMAGE DID NOT LOAD PROPERLY" << endl;
         }
@@ -91,17 +127,11 @@ int main( int argc, char** argv) {
     
         //medianBlur(gray_video_src, gray_video_src, 3);
         //find face.
-        try{
-            face_cascade.detectMultiScale(gray_video_src, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE|CV_HAAR_FIND_BIGGEST_OBJECT, Size(150, 150));
-            face_image = gray_video_src(Rect(faces[0].x, faces[0].y, faces[0].width, faces[0].height));
-            rectangle(video_src, faces[0], CV_RGB(0,255,0),1);
-        } catch(...) {
-        }
-    
+
         //find eyes
         try {
-            eye_cascade.detectMultiScale(face_image, eyes, 1.1, 2, 0|CASCADE_SCALE_IMAGE|CV_HAAR_FIND_BIGGEST_OBJECT, Size(30,30) );
-            eye_image = face_image(Rect(eyes[0].x, eyes[0].y, eyes[0].width, eyes[0].height));
+            eye_cascade.detectMultiScale(gray_video_src, eyes, 1.1, 2, 0|CASCADE_SCALE_IMAGE|CV_HAAR_FIND_BIGGEST_OBJECT, Size(30,30) );
+            eye_image = gray_video_src(Rect(eyes[0].x, eyes[0].y, eyes[0].width, eyes[0].height));
             rectangle(video_src,eyes[0], CV_RGB(0,255,0),1);
         } catch (...) {
         }
@@ -113,7 +143,7 @@ int main( int argc, char** argv) {
         blur(eye_image, light_image, Size(201,201));
         divide(eye_image, light_image, divided_image, 1, -1);
         
-        imwrite("cropped_eye.png", eye_image);
+        //imwrite("cropped_eye.png", eye_image);
 
         Mat no_light;
         Mat eq_divided;
@@ -157,40 +187,51 @@ int main( int argc, char** argv) {
         //imshow(RED_WINDOW, rgb[2]);
         //imshow(GREEN_WINDOW, rgb[1]);
         //imshow(BLUE_WINDOW, rgb[0]);
-        imshow("FACE", face_image);
+        //imshow("FACE", face_image);
 
-        imshow("EYE", eye_image);
-        imwrite( "final_Image.jpg", eye_image);
+       // imshow("EYE", eye_image);
+        //imwrite( "final_Image.jpg", eye_image);
 
-        imshow(SOURCE,video_src);
-        imshow(GRAY, gray_video_src);
+       // imshow(SOURCE,video_src);
+        //imshow(GRAY, gray_video_src);
         //imshow("INV GRAY VIDEO", temp);
         //imshow("INV GRAY VIDEO", ~eye_image);
         //imshow(GRAY, gray_video_src);
-        imshow(OTSU, otsu_image);
-        imshow(THRESHOLD, threshold_image);
+       // imshow(OTSU, otsu_image);
+        //imshow(THRESHOLD, threshold_image);
         //imshow(CANNY_WINDOW, edge);
 
-        imshow(ADAPTIVE_NAME, adapt_image);
-        imwrite("Threshold_image.png", adapt_image);
+       // imshow(ADAPTIVE_NAME, adapt_image);
+        //imwrite("Threshold_image.png", adapt_image);
 
-        imshow(LIGHT_NAME, light_image);
+       // imshow(LIGHT_NAME, light_image);
 
-        imshow("inverted light elimination", divided_image);
-        imwrite("inv_light_elim_image.png", divided_image);
+        //imshow("inverted light elimination", divided_image);
+        //imwrite("inv_light_elim_image.png", divided_image);
 
-        imshow("inverted equalized image", ~eq_divided);
-        imwrite("inverted_eq_image.png", ~eq_divided);
+        //imshow("inverted equalized image", ~eq_divided);
+        //imwrite("inverted_eq_image.png", ~eq_divided);
 
         imshow("DILATED IMAGE", dilate_image);
-        imwrite("cleaned_image.png", dilate_image);
+        //imwrite("cleaned_image.png", dilate_image);
 
-        imshow(FILTER_NAME, blur_image);
+        //imshow(FILTER_NAME, blur_image);
 
-        imshow("LIGHT ELIMINATION", no_light);
-        imwrite("light_elimination.png", no_light);
+        //imshow("LIGHT ELIMINATION", no_light);
+        //imwrite("light_elimination.png", no_light);
 
-        input = userInput(waitKey(10));
+	Size s = eye_image.size();
+	printf("\n H: %d W: %d",s.height, s.width);
+
+		//Stop the clock and show FPS
+		time(&end);
+		++counter;
+		sec=difftime(end,start);
+		fps=counter/sec;
+		//printf("\n%lf",fps);
+
+        //input = userInput(waitKey(10));
+	wKey = waitKey(1);
   }
   return 0;
 }
