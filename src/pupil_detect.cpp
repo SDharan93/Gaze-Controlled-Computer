@@ -15,9 +15,11 @@ using namespace std;
 
 void initWindows();
 void displayWindows(Detect camera, PupilLoc pupil);
+void displayWindows(Detect camera);
 void destroyWindows();
 int userInput(char input);
 void debug(Detect camera, PupilLoc pupil);
+void debug(Detect camera);
 Detect factory_detect(bool debug);
 void debug_runnable(Detect camera);
 void tk1_runnable(Detect camera);
@@ -51,16 +53,21 @@ void run_pupil_detection(int argc, char** argv) {
 
 void debug_runnable(Detect camera) {
     camera.capture_image();
-    camera.findEye(EYE_CASCADE_NAME);
-    //camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
+    //camera.findEye(EYE_CASCADE_NAME);
+    camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
     Mat eye_image = camera.get_eye_image();
 
-    PupilLoc locatePupil(eye_image);
-    locatePupil.removeLight();
-    locatePupil.isoPupil();
-
-    displayWindows(camera, locatePupil);
-    debug(camera, locatePupil);
+    if(!eye_image.empty()) {
+        PupilLoc locatePupil(eye_image);
+        locatePupil.removeLight();
+        locatePupil.isoPupil();
+        locatePupil.highlightPupil();
+        displayWindows(camera, locatePupil);
+        debug(camera, locatePupil);
+    } else {
+        displayWindows(camera);
+        debug(camera);
+    }
 }
 
 void tk1_runnable(Detect camera) {
@@ -83,6 +90,10 @@ void displayWindows(Detect camera, PupilLoc pupil) {
    imshow(IMAGE_WINDOW_NAME, camera.get_video_image()); 
 }
 
+void displayWindows(Detect camera) {
+   imshow(IMAGE_WINDOW_NAME, camera.get_video_image()); 
+}
+
 void destoryWindows() {
     destroyAllWindows();
 }
@@ -94,6 +105,14 @@ void debug(Detect camera, PupilLoc pupil) {
     } else {
         camera.destroy_windows();
         pupil.display_windows();
+    }
+}
+
+void debug(Detect camera) {
+    if(debug_flag) {
+        camera.display_windows();
+    } else {
+        camera.destroy_windows();
     }
 }
 
