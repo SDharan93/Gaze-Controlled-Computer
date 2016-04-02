@@ -37,16 +37,17 @@ Mat PupilLoc::get_postProc() {
 }
 
 void PupilLoc::removeLight() {
-    Mat light, divided_image; 
+    Mat light, divided_image, temp, contrast; 
 
-    //GaussianBlur(ref_image, ref_image, Size(3,3), 2, 2);
-    blur(ref_image, light, Size(201, 201));
+    //equalizeHist(ref_image, contrast);
+    GaussianBlur(contrast, temp, Size(3,3), 2, 2);
+    blur(temp, light, Size(191, 191));
     imshow("LIGHT WINDOW", light);
     divide(ref_image, light, divided_image, 1, -1); 
     histoPeakIndex = histoPeak(ref_image);
     cout << "peak in histo: " << histoPeakIndex << endl;
-    illuminationRM = divided_image.mul(histoPeakIndex);
-    equalizeHist(illuminationRM, illuminationRM);
+    illuminationRM = divided_image.mul(255);
+    //equalizeHist(illuminationRM, illuminationRM);
 }
 
 void PupilLoc::isoPupil() {
@@ -71,16 +72,9 @@ void PupilLoc::highlightPupil() {
         int radius = rect.width/2;
 
         //search if any contour is circular. 
-        if(area >=30 && abs(1 - ((double)rect.width / (double)rect.height)) <= 0.2 && abs( 1 - (area/(CV_PI * pow(radius,2)))) <= 0.2) {
+        if(area >=50 && abs(1 - ((double)rect.width / (double)rect.height)) <= 0.2 && abs( 1 - (area/(CV_PI * pow(radius,2)))) <= 0.2) {
     circle(ref_image, Point(rect.x+radius, rect.y+radius), radius, CV_RGB(255,0,0),2);
         }
-    }
-
-    HoughCircles(result_image, circles, HOUGH_GRADIENT, 1, 10, 100, 30, 1, 70);
-    for(size_t i = 0; i< circles.size(); i++) {
-        Vec3i c = circles[i];
-        circle(ref_image, Point(c[0], c[1]), c[2], Scalar(0,0,255), 3, LINE_AA);
-        circle(ref_image, Point(c[0], c[1]), 2, Scalar(0,255,0), 3, LINE_AA);
     }
 }
 
