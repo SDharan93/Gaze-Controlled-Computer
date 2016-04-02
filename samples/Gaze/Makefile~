@@ -16,4 +16,4 @@ cursor: gaze_to_cursor.o ; $(CXX) $< -o $@ $(LDFLAGS)
 
 gaze_to_cursor.o: gaze_to_cursor.cpp; $(CXX) $< -o $@ $(CXXFLAGS)
 
-clean: ; rm -f main.o gaze.o cursor.o calibrate.o
+clean: ; rm -f main.o 
