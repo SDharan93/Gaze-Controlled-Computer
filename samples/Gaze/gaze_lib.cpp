@@ -9,6 +9,7 @@
 #include <time.h>
 
 
+
 using namespace std;
 using namespace cv;
 
@@ -16,7 +17,7 @@ using namespace cv;
 double Scaley(int row1, int row2){
   double scaley;
   int Vert = 704;  //704 pixels vertically in the monitor
-  scaley = Vert/(row2 - row1) ;// 25 grids
+  scaley = Vert/(row2 - row1) ;
   return scaley;
 }
 
@@ -24,15 +25,16 @@ double Scaley(int row1, int row2){
 double Scalex(int col1, int col2){
   double scalex;
   int Horiz = 1252; //1252 pixels horizontally in the monitor
-  scalex = Horiz/(col2 - col1) ; //25 grids
+  scalex = Horiz/(col2 - col1) ;
   return scalex;
 }
 
-/*Creates a 250x250 black image with randomly placed white dot, then searches for the whitedot, then outputs
-cursor XY  based on scaling factor. */
+
+// replace main with another function,  input = image_width, image_height, boundary, pupil_loc
 int main(int argc, char** argv){
+
   Mat pupil_img;
-  int i, image_width, image_height, cursorx, cursory;//, j, dotx, doty, ;
+  int image_width, image_height, cursorx, cursory;
   double scalex, scaley;
 
   image_width=250;
@@ -40,14 +42,21 @@ int main(int argc, char** argv){
 
   pupil_img = Mat::zeros(image_width,image_height, CV_8U);
 
-
+   //Should be getting from calibration.cpp
     int boundary[4][2] = { {100,100},
                             {100,200},
                             {150,100},
                             {150,200} };
-    int pupil_loc[2] = {130,142};
 
+    int pupil_loc[2] = {101,200};
 
+  if ((pupil_loc[0] < boundary[0][0] )|| (pupil_loc[0] > boundary[4][0])){
+    cout << "horizontally outside calibrated area" << endl;}
+  else if ((pupil_loc[1] < boundary[0][1]) || (pupil_loc[1] > boundary[4][1])){
+    cout << "vert outside calibrated area" << endl;
+  }
+
+/*
   //Drwing the top and bottom boudary line
   for (i = boundary[0][1]; i<=boundary[1][1]; i++){
       pupil_img.at<uchar>(boundary[0][0],i) = 250;
@@ -62,59 +71,18 @@ int main(int argc, char** argv){
 
     pupil_img.at<uchar>(pupil_loc[0],pupil_loc[1]) = 250;
 //   imshow("grid", pupil_img);
-
+*/
    scaley = Scaley(boundary[0][0], boundary[3][0]);
-   scalex = Scalex(boundary [0][1], boundary[3][1]);
+   scalex = Scalex(boundary [0][1], boundary[1][1]);
 
    cout<< "scale x = " << scalex << " scale y = " << scaley << endl;
 
-   cursorx = (pupil_loc[0] - boundary[0][0])*scalex;
-   cursory = (pupil_loc[1] - boundary[0][1])* scaley;
-
+   cursorx = (pupil_loc[1] - boundary[0][1])*scalex;
+  cursory = (pupil_loc[0] - boundary[0][0])* scaley;
+  cout << "rel x " << (pupil_loc[0] - boundary[0][0]) << " rel y " << (pupil_loc[1] - boundary[0][1]) << endl;
   cout<< "cursor x = " << cursorx << " cursor y = " << cursory << endl;
 
-
-
-  //waitKey(0);
-  }
-
-
-  /*
-  image = Mat::zeros(250, 250, CV_8U); //creating a black image
-
-  srand (time(NULL));
-  image.at<uchar>(rand() % 250,rand() % 250) = 250;  //randomly placing a white dot in the image
-  imshow("image",image);
-
-            //finding the white dot in the image
-  for (i = 0; i <250; i++){
-    for (j = 0; j <250; j++){
-      if (image.at<uchar>(i,j) == 250){
-        dotx = j;
-        doty = i;
-
-        #ifdef DEBUG
-          cout << "dotx = " << dotx << "  doty = " << doty << endl;
-        #endif
-      ssdf
-    }
-  }
-
-          //find the scaling factor for horiz and vertical
-  scalex = Scalex();
-  scaley = Scaley();
-
-          //calculating which grid (size = [10 px, 10px]) the dot is
-  #ifdef DEBUG
-    cout << "gridx = " << dotx/10 << "   gridy = " << doty/10 << endl;
-  #endif
-
-        //the calculated cursor X Y
-  cursorx = (dotx/10) * scalex;
-  cursory = (doty/10) * scaley;
-
-  cout << "cursorx = " << cursorx << "   cursory = " << cursory << endl;
-
-
-  waitKey(0);
-}*/
+  imshow("sce", pupil_img);
+ waitKey(0);
+  return 1;
+}
