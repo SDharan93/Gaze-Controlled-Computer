@@ -1,6 +1,6 @@
 #make sure to add your code here...
 #creates an executable in build called gaze_contoller -- we need a better name
-ADD_EXECUTABLE(gaze_controller pupil_detect.hpp pupil_detect.cpp v4ldevice.cpp v4ldevice.h main.cpp detect.hpp detect.cpp preproc.hpp preproc.cpp postproc.hpp postproc.cpp constants.hpp)
+ADD_EXECUTABLE(gaze_controller pupil_detect.hpp pupil_detect.cpp v4ldevice.cpp v4ldevice.h main.cpp detect.hpp detect.cpp pupilLoc.hpp pupilLoc.cpp constants.hpp)
 #links the OpenCV library with the executable
 TARGET_LINK_LIBRARIES(gaze_controller ${OpenCV_LIBS})
 

@@ -17,6 +17,9 @@ static String VIDEO_WINDOW_NAME = "Video Window";
 static String GRAY_WINDOW_NAME = "Gray Video Window";
 static String EYE_WINDOW_NAME = "Eye Window"; 
 static String FACE_WINDOW_NAME = "Face Window";
+static String EYE_RESULT_NAME = "Pupil Detection Window";
+static String POST_PROCESSES_NAME = "Post Process Window";
+static String LIGHT_REMOVAL_NAME = "Light removal Window";
 
 static String FACE_CASCADE_NAME = "res/haarcascade_frontalface_alt.xml";
 static String EYE_CASCADE_NAME = "res/haarcascade_eye_tree_eyeglasses.xml";
