@@ -66,7 +66,7 @@ string ParseText(){
 
 int** Calibrate()
 {
-    int** pupil_loc = new int*[4];
+    int** pupil_loc = new int*[2];
      int counter = 0,input = 1;
 
     namedWindow("const");
@@ -76,7 +76,7 @@ int** Calibrate()
 
 
       // Wait until user press some key
-      while ((counter < 4) && (input != 0)){
+      while ((counter < 2) && (input != 0)){
          char input_char = (static_cast<char>(waitKey(0)));
           input = KeyPress(input_char);
           if (input == 2){

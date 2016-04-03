@@ -43,9 +43,9 @@ void  Draw_Gaze(int image_width, int image_height, int** boundary, int* pupil_lo
     else{
       cout << "invalid image size"; }
 
-      Rect rect(boundary[0][1], boundary[0][0], (boundary[1][1]-boundary[0][1]), (boundary[2][0] - boundary[0][0]));
+      Rect rect(boundary[0][1], boundary[0][0], (boundary[1][1]-boundary[0][1]), (boundary[1][0] - boundary[0][0]));
 
-      cout << "width = " << (boundary[1][1]-boundary[0][1]) << " height " << (boundary[2][0] - boundary[0][0]) << endl;
+      cout << "width = " << (boundary[1][1]-boundary[0][1]) << " height " << (boundary[1][0] - boundary[0][0]) << endl;
 
       rectangle (gaze_img, rect,  CV_RGB(255,0,0), 1, 8, 0);
     //Drwing the top and bottom boudary line
@@ -90,16 +90,16 @@ int * Cursor_Coordinates(int image_width, int image_height, int** boundary, int 
   int * cursor_loc  = new int[2] ;
   double scalex, scaley;
 
-  if ((pupil_loc[1] < boundary[0][1])|| (pupil_loc[1] > boundary[3][1])){
+  if ((pupil_loc[1] < boundary[0][1])|| (pupil_loc[1] > boundary[1][1])){
     cout << "horizontally outside calibrated area" << endl;}
-  if ((pupil_loc[0] < boundary[0][0]) || (pupil_loc[0] > boundary[3][0])){
+  if ((pupil_loc[0] < boundary[0][0]) || (pupil_loc[0] > boundary[1][0])){
     cout << "vert outside calibrated area" << endl;
   }
 
    Draw_Gaze(image_width, image_height, boundary, pupil_loc);
 
 
-   scaley = Scaley(boundary[0][0], boundary[3][0]);
+   scaley = Scaley(boundary[0][0], boundary[1][0]);
    scalex = Scalex(boundary [0][1], boundary[1][1]);
 
    #ifdef DEBUG
