@@ -1,12 +1,5 @@
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
-#include "opencv2/objdetect.hpp"
-#include <opencv2/videoio.hpp>
-
-#include <iostream>
+#include "constants.hpp"
 #include <stdio.h>
-#include <time.h>
 
 #include "gaze_lib.hpp"
 using namespace std;
@@ -17,7 +10,7 @@ using namespace cv;
  //Returns the vertical scaling factor between input image and output monitor;
 double Scaley(int row1, int row2){
   double scaley;
-  int Vert = 704;  //704 pixels vertically in the monitor
+  int Vert = Monitor_height; // stored in constants.hpp
   scaley = Vert/(row2 - row1) ;
 
   #ifdef DEBUG
@@ -30,7 +23,7 @@ double Scaley(int row1, int row2){
  //Returns the horizontal scaling factor between input image and output monitor;
 double Scalex(int col1, int col2){
   double scalex;
-  int Horiz = 1252; //1252 pixels horizontally in the monitor
+  int Horiz = Monitor_width; //stored in constants.hpp
   scalex = Horiz/(col2 - col1) ;
 
   #ifdef DEBUG
@@ -50,8 +43,13 @@ void  Draw_Gaze(int image_width, int image_height, int** boundary, int* pupil_lo
     else{
       cout << "invalid image size"; }
 
+      Rect rect(boundary[0][1], boundary[0][0], (boundary[1][1]-boundary[0][1]), (boundary[2][0] - boundary[0][0]));
+
+      cout << "width = " << (boundary[1][1]-boundary[0][1]) << " height " << (boundary[2][0] - boundary[0][0]) << endl;
+
+      rectangle (gaze_img, rect,  CV_RGB(255,0,0), 1, 8, 0);
     //Drwing the top and bottom boudary line
-    for (i = boundary[0][1]; i<=boundary[1][1]; i++){
+  /*  for (i = boundary[0][1]; i<=boundary[1][1]; i++){
         gaze_img.at<uchar>(boundary[0][0],i) = 250;
         gaze_img.at<uchar>(boundary[3][0],i) = 250;
     }
@@ -64,7 +62,7 @@ void  Draw_Gaze(int image_width, int image_height, int** boundary, int* pupil_lo
     for (i = boundary[0][0]; i<=boundary[3][0]; i++){
         gaze_img.at<uchar>(i,boundary[0][1]) = 250;
         gaze_img.at<uchar>(i,boundary[1][1]) = 250;
-    }
+    }*/
 
     #ifdef DEBUG
       cout << "done drawing left and right calibration box line"<< endl;

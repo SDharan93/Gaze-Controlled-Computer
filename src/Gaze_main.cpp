@@ -9,6 +9,7 @@
 #include "Calibration.hpp"
 #include "gaze_lib.hpp"
 
+//#define DEBUG
 
 string ParseText2(){
   std::ifstream infile("coordinates.txt");
@@ -54,11 +55,11 @@ int main(int argc, char** argv){
               cout << "error during calib" << endl;
             }
             #ifdef DEBUG
-              cout << "row =" << ropupil_loc[0] << " col=" << pupil_loc[1] << endl;
+              cout << "row =" << pupil_loc[0] << " col=" << pupil_loc[1] << endl;
             #endif
 
 
-    int* cursor_loc = Cursor_Coordinates(image_width, image_height, calibration_box, pupil_loc);
+   int* cursor_loc = Cursor_Coordinates(image_width, image_height, calibration_box, pupil_loc);
 
     cout << "move cursor loc  x:" << cursor_loc[1] << " y:" << cursor_loc[0] << endl;
 

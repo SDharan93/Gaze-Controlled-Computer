@@ -7,15 +7,15 @@
 #include <iostream>
 #include <cmath>
 
-//Contains the global variables for the program. 
-using namespace cv; 
-using namespace std; 
+//Contains the global variables for the program.
+using namespace cv;
+using namespace std;
 
-//Window Names 
+//Window Names
 static String IMAGE_WINDOW_NAME = "Image Window";
 static String VIDEO_WINDOW_NAME = "Video Window";
 static String GRAY_WINDOW_NAME = "Gray Video Window";
-static String EYE_WINDOW_NAME = "Eye Window"; 
+static String EYE_WINDOW_NAME = "Eye Window";
 static String FACE_WINDOW_NAME = "Face Window";
 static String EYE_RESULT_NAME = "Pupil Detection Window";
 static String POST_PROCESSES_NAME = "Post Process Window";
@@ -34,3 +34,6 @@ static int DEBUG_WINDOWS = 100; //d
 static int CLOSE_WINDOWS = 99; //c
 
 static float alpha = 1.0625;
+
+static int Monitor_width = 1366;
+static int Monitor_height = 768;
