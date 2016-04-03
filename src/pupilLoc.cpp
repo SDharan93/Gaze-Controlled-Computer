@@ -80,8 +80,9 @@ void PupilLoc::highlightPupil() {
     }
 
     drawContours(ref_image, contours, largest_contour_index, Scalar(255), CV_FILLED, 8, hierarchy); 
-    int radius = bounding_rect.width/4;
+    int radius = bounding_rect.width/2;
     circle(ref_image, Point(bounding_rect.x+radius, bounding_rect.y+radius), radius, CV_RGB(255,0,0),2);
+    cout << "POINTS: X= " << bounding_rect.x+radius << " Y= " << bounding_rect.y+radius << endl;
 }
 
 void PupilLoc::display_windows() {
@@ -121,7 +122,6 @@ int histoPeak(Mat image) {
             highest = binVal; 
             index = i;
         }
-        cout << "index: " << index << " value: " << binVal << endl;
     }
     return index;
 }
