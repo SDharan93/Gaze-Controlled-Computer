@@ -73,7 +73,7 @@ void  Draw_Gaze(int image_width, int image_height, int** boundary, int* pupil_lo
       gaze_img.at<uchar>(pupil_loc[0],pupil_loc[1]) = 250;
 
      imshow("gaze_img", gaze_img);
-
+     waitKey(100);
 }
 
 
@@ -116,6 +116,7 @@ int * Cursor_Coordinates(int image_width, int image_height, int** boundary, int 
     cout<< "cursor x = " << cursor_loc[1] << " cursor y = " << cursor_loc[0] << endl;
   #endif
 
- waitKey(0);
+
   return cursor_loc;
+
 }
