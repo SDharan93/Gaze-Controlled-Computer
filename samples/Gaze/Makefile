@@ -8,12 +8,25 @@ gaze: gazelib.o ; $(CXX) $< -o $@ $(LDFLAGS)
 
 gazelib.o: gaze_lib.cpp; $(CXX) $< -o $@ $(CXXFLAGS)
 
-calib: calibrate.o ; $(CXX)  $< -o $@ $(LDFLAGS) 
+calib: Calibration.o ; $(CXX) $< -o $@ $(LDFLAGS)
 
-calibrate.o: calibration.cpp; $(CXX) $< -o $@ $(CXXFLAGS) -lX11
+Calibration.o: Calibration.cpp Calibration.hpp; g++ Calibration.cpp -c $(CXXFLAGS)
 
-cursor: gaze_to_cursor.o ; $(CXX) $< -o $@ $(LDFLAGS)
+
+
+cursor: Calibration.o gaze_lib.o Gaze_main.o ; g++ Calibration.o gaze_lib.o Gaze_main.o -o $@ $(LDFLAGS) 
+
+Calibration.o: Calibration.cpp Calibration.hpp; g++ Calibration.cpp -c $(CXXFLAGS)
+
+gaze_lib.o: gaze_lib.cpp gaze_lib.hpp; g++ gaze_lib.cpp -c $(CXXFLAGS)
+
+
+Gaze_main.o: Gaze_main.cpp ; g++ Gaze_main.cpp -c $(CXXFLAGS)
+
+
+
+test: gaze_to_cursor.o ; $(CXX) $< -o $@ $(LDFLAGS)
 
 gaze_to_cursor.o: gaze_to_cursor.cpp; $(CXX) $< -o $@ $(CXXFLAGS)
 
-clean: ; rm -f main.o gaze.o cursor.o calibrate.o
+clean: ; rm -f main.o gaze.o cursor.o 
