@@ -84,7 +84,7 @@ void PupilLoc::highlightPupil() {
     circle(ref_image, Point(bounding_rect.x+radius, bounding_rect.y+radius), radius, CV_RGB(255,0,0),2);
     cout << "POINTS: Y= " << bounding_rect.y+radius << " X= " << bounding_rect.x+radius << endl;
     file.open("coordinates.txt", fstream::out | fstream::trunc);
-    file << "POINTS: Y= " << bounding_rect.y+radius << " X= " << bounding_rect.x+radius << endl;
+    file << bounding_rect.y+radius << " " << bounding_rect.x+radius << endl;
     file.close();
 }
 
