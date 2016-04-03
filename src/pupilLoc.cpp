@@ -55,7 +55,7 @@ void PupilLoc::isoPupil() {
     adaptiveThreshold(inv_ill, postProc, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 15, -5);
     medianBlur(postProc, result_image, 7);
     //morphologyEx(result_image, result_image, MORPH_OPEN, open_element);
-    morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
+    //morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
 }
 
 void PupilLoc::highlightPupil() {
@@ -63,36 +63,23 @@ void PupilLoc::highlightPupil() {
     vector<Vec4i> hierarchy; 
     vector<Vec3f> circles;
     fstream myfile;
-    myfile.open ("coordinates.txt");
+    int largest_area = 0;
+    int largest_contour_index = 0; 
+    Rect bounding_rect;
 
-    findContours(result_image, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point(0,0));
+    findContours(result_image.clone(),  contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
 
     //go through every contour 
     for(int i=0; i<contours.size(); i++) {
-        double area = contourArea(contours[i]);
-        Rect rect = boundingRect(contours[i]);
-        int radius = rect.width/2;
-
-        //search if any contour is circular. 
-        if(area >=50 && abs(1 - ((double)rect.width / (double)rect.height)) <= 0.2 && abs( 1 - (area/(CV_PI * pow(radius,2)))) <= 0.2) {
-            circle(ref_image, Point(rect.x+radius, rect.y+radius), radius, CV_RGB(255,0,0),2);
-
-            //this is temporary, but writes to file for gaze.
-            myfile << rect.x+radius << rect.y+radius << endl;
+        double area = contourArea(contours[i], false);
+        if(area > largest_area) {
+            largest_area = area;
+            largest_contour_index = i; 
+            bounding_rect = boundingRect(contours[i]); //find the bounding rectangle
         }
     }
-    
-    HoughCircles(ref_image.clone(), circles, HOUGH_GRADIENT, 1, 10, 100, 30, 1, 50);
-    for(size_t i = 0; i < circles.size(); i++) {
-        Vec3i c = circles[i];
-        circle(ref_image, Point(c[0], c[1]), c[2], Scalar(0,0,255), 3, LINE_AA);
-        
-        //this is temporary, but writes to file for gaze.
-        myfile << c[0] << " " << c[1] << endl;
 
-        circle(ref_image, Point(c[0], c[1]), 2, Scalar(0,255,0), 3, LINE_AA);
-    }
-    myfile.close();
+    drawContours(ref_image, contours, largest_contour_index, Scalar(255), CV_FILLED, 8, hierarchy); 
 }
 
 void PupilLoc::display_windows() {
