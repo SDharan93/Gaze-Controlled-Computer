@@ -6,3 +6,4 @@ using namespace std;
 
 int KeyPress(char input);
 int** Calibrate();
+string ParseText();
