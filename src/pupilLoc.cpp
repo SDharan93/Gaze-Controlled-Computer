@@ -76,12 +76,12 @@ void PupilLoc::highlightPupil() {
             largest_area = area;
             largest_contour_index = i; 
             bounding_rect = boundingRect(contours[i]); //find the bounding rectangle
-            int radius = bounding_rect.width/2;
-            circle(ref_image, Point(bounding_rect.x+radius, bounding_rect.y+radius), radius, CV_RGB(255,0,0),2);
         }
     }
 
     drawContours(ref_image, contours, largest_contour_index, Scalar(255), CV_FILLED, 8, hierarchy); 
+    int radius = bounding_rect.width/4;
+    circle(ref_image, Point(bounding_rect.x+radius, bounding_rect.y+radius), radius, CV_RGB(255,0,0),2);
 }
 
 void PupilLoc::display_windows() {
