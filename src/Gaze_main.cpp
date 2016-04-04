@@ -10,6 +10,7 @@
 #include "Calibration.hpp"
 #include "constants.hpp"
 #include "gaze_lib_corner.hpp"
+#include "gaze_lib.hpp"
 
 //#define DEBUG
 
@@ -60,8 +61,8 @@ int main(int argc, char** argv){
             #endif
 
 
-  //   int* cursor_loc = Cursor_Coordinates(calibimg_width, calibimg_height, calibration_box, pupil_loc);
-     int* cursor_loc = Cursor_Coordinates_corner(calibimg_width, calibimg_height, calibration_box, pupil_loc);
+    int* cursor_loc = Cursor_Coordinates(calibimg_width, calibimg_height, calibration_box, pupil_loc);
+     //int* cursor_loc = Cursor_Coordinates_corner(calibimg_width, calibimg_height, calibration_box, pupil_loc);
 
     //  cout << "move cursor loc  x:" << cursor_loc[1] << " y:" << cursor_loc[0] << endl;
 
