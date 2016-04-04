@@ -47,7 +47,7 @@ void  Draw_Gaze_corner(int image_width, int image_height, int** boundary, int* p
         cout << "invalid image size"; }
 
         Rect rect(boundary[0][1], boundary[0][0], (boundary[1][1]-boundary[0][1]), (boundary[1][0] - boundary[0][0]));
-        
+
         rectangle (gaze_img, rect,  CV_RGB(255,255,255), 1, 8, 0);
       //Drwing the top and bottom boudary line
     /*  for (i = boundary[0][1]; i<=boundary[1][1]; i++){
@@ -114,16 +114,16 @@ int * Cursor_Coordinates_corner(int image_width, int image_height, int** boundar
      if (cursor_loc[0] < 0){
        cursor_loc[0] = 0;
      }
-     else if (cursor_loc[0] > Monitor_height){
+  /*   else if (cursor_loc[0] > Monitor_height){
        cursor_loc[0] = Monitor_height;
-     }
+     }*/
 
      if (cursor_loc[1] < 0){
        cursor_loc[1] = 0;
      }
-     else if (cursor_loc[1] > Monitor_width){
+     /*else if (cursor_loc[1] > Monitor_width){
        cursor_loc[1] = Monitor_width;
-     }
+     }*/
 
 
 
