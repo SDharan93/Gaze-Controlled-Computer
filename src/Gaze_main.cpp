@@ -8,6 +8,7 @@
 
 
 #include "Calibration.hpp"
+#include "constants.hpp"
 #include "gaze_lib.hpp"
 
 //#define DEBUG
@@ -42,8 +43,6 @@ int main(int argc, char** argv){
 
     int** calibration_box = Calibrate();
 
-    int image_width = 500;
-    int image_height = 500;
     int pupil_loc[2];
 
     while (true) {
@@ -60,7 +59,7 @@ int main(int argc, char** argv){
             #endif
 
 
-     int* cursor_loc = Cursor_Coordinates(image_width, image_height, calibration_box, pupil_loc);
+     int* cursor_loc = Cursor_Coordinates(calibimg_width, calibimg_height, calibration_box, pupil_loc);
 
     //  cout << "move cursor loc  x:" << cursor_loc[1] << " y:" << cursor_loc[0] << endl;
 
@@ -69,7 +68,7 @@ int main(int argc, char** argv){
      string str2 = "xdotool mousemove " + ss.str();
      const char * command = str2.c_str();
      cout << "command = " << command << endl;
-     system (command);
+    system (command);
 
   }
 

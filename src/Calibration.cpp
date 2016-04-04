@@ -1,6 +1,6 @@
-#include "opencv2/highgui/highgui.hpp"
-#include <iostream>
+
 #include "Calibration.hpp"
+#include "constants.hpp"
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -66,7 +66,7 @@ string ParseText(){
 
 int** Calibrate()
 {
-    int** pupil_loc = new int*[2];
+    int** pupil_loc = new int*[calib_points];  //3 points: 1. center of screen   2.center top    3.center left
      int counter = 0,input = 1;
 
     namedWindow("const");
@@ -76,7 +76,7 @@ int** Calibrate()
 
 
       // Wait until user press some key
-      while ((counter < 2) && (input != 0)){
+      while ((counter < calib_points) && (input != 0)){
          char input_char = (static_cast<char>(waitKey(0)));
           input = KeyPress(input_char);
           if (input == 2){
@@ -90,7 +90,7 @@ int** Calibrate()
               cout << "error during calib" << endl;
             }
 
-            #ifdef DEBUG
+            #ifdef DEBUG2
               cout << "row =" << row << " col=" << col << endl;
             #endif
 

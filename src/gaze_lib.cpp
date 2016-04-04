@@ -8,33 +8,33 @@ using namespace cv;
 //#define DEBUG
 
  //Returns the vertical scaling factor between input image and output monitor;
-double Scaley(int row1, int row2){
+double Scaley(int height){
   double scaley;
-  int Vert = Monitor_height; // stored in constants.hpp
-  scaley = Vert/(row2 - row1) ;
+
+  scaley = Monitor_height/height ;// Monitor_height stored in constants.hpp
 
   #ifdef DEBUG
-    cout << "row1= " << row1 << " row2= " << row2 << " scaley= " << scaley << endl;
+    cout << "height = " << height << " scaley= " << scaley << endl;
   #endif
 
   return scaley;
 }
 
  //Returns the horizontal scaling factor between input image and output monitor;
-double Scalex(int col1, int col2){
+double Scalex(int width){
   double scalex;
-  int Horiz = Monitor_width; //stored in constants.hpp
-  scalex = Horiz/(col2 - col1) ;
+  scalex = Monitor_width /width ; //stored in constants.hpp
 
   #ifdef DEBUG
-      cout << "col1= " << col1 << " col2= " << col2 << " scalex= " << scalex << endl;
+      cout << "width = " << width << " scalex= " << scalex << endl;
   #endif
 
   return scalex;
 }
 
+
 //Displays the an image with the boundary box and the location of the pupil
-void  Draw_Gaze(int image_width, int image_height, int** boundary, int* pupil_loc){
+void  Draw_Gaze(int image_width, int image_height, int** boundary, int bound_width, int bound_height, int* pupil_loc){
   Mat gaze_img;
   int i;
 
@@ -43,10 +43,7 @@ void  Draw_Gaze(int image_width, int image_height, int** boundary, int* pupil_lo
     else{
       cout << "invalid image size"; }
 
-      Rect rect(boundary[0][1], boundary[0][0], (boundary[1][1]-boundary[0][1]), (boundary[1][0] - boundary[0][0]));
-
-      cout << "width = " << (boundary[1][1]-boundary[0][1]) << " height " << (boundary[1][0] - boundary[0][0]) << endl;
-
+      Rect rect(boundary[2][1], boundary[1][0], bound_width, bound_height);
       rectangle (gaze_img, rect,  CV_RGB(255,255,255), 1, 8, 0);
 
 
@@ -76,24 +73,40 @@ int * Cursor_Coordinates(int image_width, int image_height, int** boundary, int 
   int * cursor_loc  = new int[2] ;
   double scalex, scaley;
 
-  if ((pupil_loc[1] < boundary[0][1])|| (pupil_loc[1] > boundary[1][1])){
-    cout << "horizontally outside calibrated area" << endl;}
-  if ((pupil_loc[0] < boundary[0][0]) || (pupil_loc[0] > boundary[1][0])){
-    cout << "vert outside calibrated area" << endl;
-  }
+  int bound_height = (boundary[0][0] - boundary[1][0]) *2;
+  int bound_width = (boundary[0][1] - boundary[2][1]) *2;
 
-   Draw_Gaze(image_width, image_height, boundary, pupil_loc);
+  #ifdef DEBUG
+    cout << "height = " << bound_height << " width = " << bound_width << endl;
+  #endif
+
+   Draw_Gaze(image_width, image_height, boundary, bound_width, bound_height, pupil_loc);
 
 
-   scaley = Scaley(boundary[0][0], boundary[1][0]);
-   scalex = Scalex(boundary [0][1], boundary[1][1]);
+   scaley = Scaley(bound_height);
+   scalex = Scalex(bound_width);
 
    #ifdef DEBUG
       cout<< "scale x = " << scalex << " scale y = " << scaley << endl;
    #endif
 
-   cursor_loc[0] = (pupil_loc[0] - boundary[0][0])* scaley;
-   cursor_loc[1] = (pupil_loc[1] - boundary[0][1])* scalex;
+   cursor_loc[0] = (pupil_loc[0] - boundary[1][0])* scaley;
+   cursor_loc[1] = (pupil_loc[1] - boundary[2][1])* scalex;
+
+
+   if (cursor_loc[0] < 0){
+     cursor_loc[0] = 0;
+   }
+   else if (cursor_loc[0] > Monitor_height){
+     cursor_loc[0] = Monitor_height;
+   }
+
+   if (cursor_loc[1] < 0){
+     cursor_loc[1] = 0;
+   }
+   else if (cursor_loc[1] > Monitor_width){
+     cursor_loc[1] = Monitor_width;
+   }
 
 
   #ifdef DEBUG
