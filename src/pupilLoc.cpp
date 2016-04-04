@@ -42,15 +42,15 @@ void PupilLoc::removeLight() {
     //equalizeHist(ref_image, contrast);
     //GaussianBlur(ref_image, temp, Size(3,3), 2,2);
     //blur(ref_image, temp, Size(5, 5));
-    bilateralFilter(ref_image, temp, 5, 17, 17);
+    bilateralFilter(ref_image, temp, 15, 45, 45);
     imshow("NOISE REDUCTION", temp);
     //GaussianBlur(temp , light, Size(425, 425), 0, 0);
     blur(temp, light, Size(509, 509));
     imshow("LIGHT", light);
     divide(temp, light, divided_image, 1, -1); 
     histoPeakIndex = histoPeak(temp);
-    illuminationRM = divided_image.mul(histoPeakIndex);
-    //equalizeHist(illuminationRM, illuminationRM);
+    illuminationRM = divided_image.mul(255);
+    equalizeHist(illuminationRM, illuminationRM);
 
     int erode_size = 3;
     Mat erode_element = getStructuringElement(2, Size(2 * erode_size + 1, 2 * erode_size +1), Point(erode_size, erode_size));
