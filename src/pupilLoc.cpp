@@ -54,18 +54,18 @@ void PupilLoc::removeLight() {
 
 void PupilLoc::isoPupil() {
     Mat inv_ill = ~illuminationRM; 
-    //adaptiveThreshold(inv_ill, postProc, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 15, -5);
-    //imshow("THRESHOLD IMAGE", postProc);
+    adaptiveThreshold(inv_ill, postProc, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 15, -5);
+    imshow("THRESHOLD IMAGE", postProc);
 
-    threshold(inv_ill, postProc, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-    imshow("OTSU THRESHOLD", postProc);
+    //threshold(inv_ill, postProc, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+    //imshow("OTSU THRESHOLD", postProc);
 
     medianBlur(postProc, result_image, 7);
     imshow("AFTER FILTER", result_image);
-    morphologyEx(result_image, result_image, MORPH_OPEN, open_element);
-    imshow("AFTER OPEN", result_image);
-    morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
-    imshow("AFTER CLOSE", result_image);
+    //morphologyEx(result_image, result_image, MORPH_OPEN, open_element);
+    //imshow("AFTER OPEN", result_image);
+    //morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
+    //imshow("AFTER CLOSE", result_image);
 }
 
 void PupilLoc::highlightPupil() {
@@ -89,7 +89,7 @@ void PupilLoc::highlightPupil() {
         }
     }
 
-    //drawContours(ref_image, contours, largest_contour_index, Scalar(255), CV_FILLED, 8, hierarchy); 
+    drawContours(ref_image, contours, largest_contour_index, Scalar(255), CV_FILLED, 8, hierarchy); 
     int radius = bounding_rect.width/2;
     circle(ref_image, Point(bounding_rect.x+radius, bounding_rect.y+radius), radius, CV_RGB(255,0,0),2);
     cout << "POINTS: Y= " << bounding_rect.y+radius << " X= " << bounding_rect.x+radius << endl;
