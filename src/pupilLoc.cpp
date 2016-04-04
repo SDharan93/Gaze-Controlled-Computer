@@ -43,7 +43,7 @@ void PupilLoc::removeLight() {
     GaussianBlur(ref_image, temp, Size(3,3), 2,2);
     imshow("NOISE REDUCTION", temp);
     //GaussianBlur(temp , light, Size(425, 425), 0, 0);
-    blur(temp, light, Size(401, 401));
+    blur(temp, light, Size(355, 355));
     imshow("LIGHT", light);
     divide(ref_image, light, divided_image, 1, -1); 
     histoPeakIndex = histoPeak(ref_image);
@@ -66,8 +66,8 @@ void PupilLoc::isoPupil() {
     imshow("AFTER FILTER", result_image);
     morphologyEx(result_image, result_image, MORPH_OPEN, open_element);
     imshow("AFTER OPEN", result_image);
-    morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
-    imshow("AFTER CLOSE", result_image);
+    //morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
+    //imshow("AFTER CLOSE", result_image);
 }
 
 void PupilLoc::highlightPupil() {
