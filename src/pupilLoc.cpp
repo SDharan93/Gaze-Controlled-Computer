@@ -40,23 +40,27 @@ void PupilLoc::removeLight() {
     Mat light, divided_image, temp, contrast; 
 
     //equalizeHist(ref_image, contrast);
-    GaussianBlur(ref_image, temp, Size(3,3), 2, 2);
-    blur(temp, light, Size(191, 191));
-    imshow("LIGHT WINDOW", light);
+    GaussianBlur(ref_image, temp, Size(3,3), 2,2);
+    imshow("NOISE REDUCTION", temp);
+    //GaussianBlur(temp , light, Size(425, 425), 0, 0);
+    blur(temp, light, Size(401, 401));
+    imshow("LIGHT", light);
     divide(ref_image, light, divided_image, 1, -1); 
     histoPeakIndex = histoPeak(ref_image);
-    cout << "peak in histo: " << histoPeakIndex << endl;
     illuminationRM = divided_image.mul(255);
     //equalizeHist(illuminationRM, illuminationRM);
+    imshow("EQUALIZED", ~illuminationRM);
 }
 
 void PupilLoc::isoPupil() {
     Mat inv_ill = ~illuminationRM; 
+    imshow("INV REMOVAL", inv_ill);
     //adaptiveThreshold(inv_ill, postProc, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 15, -5);
     //imshow("THRESHOLD IMAGE", postProc);
 
     threshold(inv_ill, postProc, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
     imshow("OTSU THRESHOLD", postProc);
+    //imshow("THRESHOLD IMAGE", postProc);
 
     medianBlur(postProc, result_image, 7);
     imshow("AFTER FILTER", result_image);

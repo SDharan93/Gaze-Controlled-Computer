@@ -4,9 +4,16 @@
 using namespace cv;
 using namespace std;
 
+Rect rect; 
+
 Mat cascade_search(String name, Mat video_image, Mat gray_image, int size, Mat saved_image);
 Mat get_red_channel(Mat source);
 
+
+    int Detect::search_count = 0;
+    bool Detect::search_flag = true;
+    Rect Detect::eye_crop = Rect(Point(0,0),Point(40,40));
+    
 Detect::Detect() {
     cap.open(0);
 }
@@ -18,6 +25,9 @@ Detect::Detect(char* dest, int width, int height) {
 
     init_device(width, height);
     start_capturing();
+
+    //Detect::search_count = 0;
+    //Detect::search_flag = true;
 }
 
 Mat Detect::get_face_image() {
@@ -59,7 +69,8 @@ bool Detect::capture_image() {
 bool Detect::nv_capture_image() {
     Mat input, conversion, demosiac;
 
-    Rect myROI(320, 10, 720, 300);
+    //Rect myROI(320, 10, 720, 300)
+    Rect myROI(900, 300, 600, 450);
 
     input = Mat(imageSize, CV_16UC1, snapFrame());
     waitKey(75);
@@ -102,12 +113,22 @@ bool Detect::findFace(String face_cascade_name) {
 bool Detect::findEye(String eye_cascade_name) {
     Mat gray_image;
     gray_image = get_red_channel(video_image);
-    eye_image = cascade_search(eye_cascade_name, video_image, gray_image, 30, eye_image);
+    cout << "flag is: " << Detect::search_flag << " count: " << Detect::search_count << endl;
+    if(!Detect::search_flag) {
+        eye_image = gray_image(eye_crop);
+    } else {
+        eye_image = cascade_search(eye_cascade_name, video_image, gray_image, 30, eye_image);
+        cout << rect.y << " " <<  rect.x;
+        eye_crop = rect;
+    }
 
     //check if the matrix is empty or not
     if(eye_image.empty()) {
         return false;
     } else {
+        Detect::eye_crop = rect;
+        Detect::search_count++;
+        if(Detect::search_count >= 3) Detect::search_flag=false;
         return true;
     }
 }
@@ -161,6 +182,7 @@ Mat cascade_search(String name, Mat video_image, Mat search_image, int size, Mat
         if(!cascade_vec.empty()) {
             result = search_image(Rect(cascade_vec[0].x, cascade_vec[0].y, cascade_vec[0].width, cascade_vec[0].height)).clone();
             rectangle(video_image, cascade_vec[0], CV_RGB(0, 255, 0), 1);
+            rect = cascade_vec[0];
         } else {
             cout << "COULD NOT FIND FEATURE IN THIS FRAME." << endl; 
         }    

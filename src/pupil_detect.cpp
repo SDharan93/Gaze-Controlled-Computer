@@ -56,6 +56,7 @@ void PupilDetect::run_pupil_detection(int argc, char** argv) {
 }
 
 void debug_runnable(Detect camera, Mat result) {
+    //camera.capture_image();
     camera.load_image(DEBUG_IMAGE_NAME);
     camera.findEye(EYE_CASCADE_NAME);
     //camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
