@@ -40,14 +40,16 @@ void PupilLoc::removeLight() {
     Mat light, divided_image, temp, contrast; 
 
     //equalizeHist(ref_image, contrast);
-    GaussianBlur(ref_image, temp, Size(3,3), 2, 2);
-    blur(temp, light, Size(191, 191));
+    GaussianBlur(ref_image, temp, Size(3,3), 0, 0);
+    GaussianBlur(temp , light, Size(399, 399), 0, 0);
+    //blur(temp, light, Size(191, 191));
     imshow("LIGHT WINDOW", light);
     divide(ref_image, light, divided_image, 1, -1); 
     histoPeakIndex = histoPeak(ref_image);
     cout << "peak in histo: " << histoPeakIndex << endl;
-    illuminationRM = divided_image.mul(255);
-    //equalizeHist(illuminationRM, illuminationRM);
+    illuminationRM = divided_image.mul(histoPeakIndex);
+    equalizeHist(illuminationRM, illuminationRM);
+    morphologyEx(illuminationRM, illuminationRM, MORPH_OPEN, open_element);
 }
 
 void PupilLoc::isoPupil() {
