@@ -47,7 +47,7 @@ void  Draw_Gaze(int image_width, int image_height, int** boundary, int* pupil_lo
 
       cout << "width = " << (boundary[1][1]-boundary[0][1]) << " height " << (boundary[1][0] - boundary[0][0]) << endl;
 
-      rectangle (gaze_img, rect,  CV_RGB(255,0,0), 1, 8, 0);
+      rectangle (gaze_img, rect,  CV_RGB(255,255,255), 1, 8, 0);
     //Drwing the top and bottom boudary line
   /*  for (i = boundary[0][1]; i<=boundary[1][1]; i++){
         gaze_img.at<uchar>(boundary[0][0],i) = 250;
