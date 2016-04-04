@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <stdlib.h>
 
 
 #include "Calibration.hpp"
@@ -59,9 +60,16 @@ int main(int argc, char** argv){
             #endif
 
 
-   int* cursor_loc = Cursor_Coordinates(image_width, image_height, calibration_box, pupil_loc);
+     int* cursor_loc = Cursor_Coordinates(image_width, image_height, calibration_box, pupil_loc);
 
-    cout << "move cursor loc  x:" << cursor_loc[1] << " y:" << cursor_loc[0] << endl;
+    //  cout << "move cursor loc  x:" << cursor_loc[1] << " y:" << cursor_loc[0] << endl;
+
+     ostringstream ss;
+     ss  << cursor_loc[1] <<  " " << cursor_loc[0];
+     string str2 = "xdotool mousemove " + ss.str();
+     const char * command = str2.c_str();
+     cout << "command = " << command << endl;
+     system (command);
 
   }
 
