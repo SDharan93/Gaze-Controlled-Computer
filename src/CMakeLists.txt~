@@ -9,6 +9,6 @@ ADD_EXECUTABLE(example example.cpp)
 TARGET_LINK_LIBRARIES(example ${OpenCV_LIBS})
 
 
-ADD_EXECUTABLE(cursor gaze_lib.hpp gaze_lib.cpp Calibration.hpp Calibration.cpp Gaze_main.cpp pupil_detect.hpp pupil_detect.cpp v4ldevice.cpp v4ldevice.h detect.hpp detect.cpp pupilLoc.hpp pupilLoc.cpp constants.hpp)
+ADD_EXECUTABLE(gaze_lib_corner.cpp gaze_lib_corner.hpp cursor gaze_lib.hpp gaze_lib.cpp Calibration.hpp Calibration.cpp Gaze_main.cpp pupil_detect.hpp pupil_detect.cpp v4ldevice.cpp v4ldevice.h detect.hpp detect.cpp pupilLoc.hpp pupilLoc.cpp constants.hpp)
 #links the OpenCV library with the executable
 TARGET_LINK_LIBRARIES(cursor ${OpenCV_LIBS})

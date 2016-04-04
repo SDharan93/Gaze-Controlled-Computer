@@ -9,7 +9,7 @@
 
 #include "Calibration.hpp"
 #include "constants.hpp"
-#include "gaze_lib.hpp"
+#include "gaze_lib_corner.hpp"
 
 //#define DEBUG
 
@@ -41,6 +41,7 @@ string ParseText2(){
 
 int main(int argc, char** argv){
 
+
     int** calibration_box = Calibrate();
 
     int pupil_loc[2];
@@ -59,7 +60,8 @@ int main(int argc, char** argv){
             #endif
 
 
-     int* cursor_loc = Cursor_Coordinates(calibimg_width, calibimg_height, calibration_box, pupil_loc);
+  //   int* cursor_loc = Cursor_Coordinates(calibimg_width, calibimg_height, calibration_box, pupil_loc);
+     int* cursor_loc = Cursor_Coordinates_corner(calibimg_width, calibimg_height, calibration_box, pupil_loc);
 
     //  cout << "move cursor loc  x:" << cursor_loc[1] << " y:" << cursor_loc[0] << endl;
 
@@ -71,6 +73,5 @@ int main(int argc, char** argv){
     system (command);
 
   }
-
     return 1;
 }
