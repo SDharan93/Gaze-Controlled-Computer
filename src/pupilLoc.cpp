@@ -7,8 +7,8 @@ int histoPeak(Mat image);
 
 PupilLoc::PupilLoc(Mat eye_image) {
     histoPeakIndex = 0;
-    close_size = 3;
-    open_size = 6;
+    close_size = 6;
+    open_size = 3;
     
     open_element = getStructuringElement(2, Size(2 * close_size + 1, 2 * close_size +1), Point(close_size, close_size));
     close_element = getStructuringElement(2, Size(2 * open_size + 1, 2 * open_size +1), Point(open_size, open_size));
@@ -42,7 +42,7 @@ void PupilLoc::removeLight() {
     //equalizeHist(ref_image, contrast);
     //GaussianBlur(ref_image, temp, Size(3,3), 2,2);
     //blur(ref_image, temp, Size(5, 5));
-    bilateralFilter(ref_image, temp, 9, 13, 13);
+    bilateralFilter(ref_image, temp, 5, 17, 17);
     imshow("NOISE REDUCTION", temp);
     //GaussianBlur(temp , light, Size(425, 425), 0, 0);
     blur(temp, light, Size(509, 509));
@@ -51,6 +51,7 @@ void PupilLoc::removeLight() {
     histoPeakIndex = histoPeak(temp);
     illuminationRM = divided_image.mul(255);
     equalizeHist(illuminationRM, illuminationRM);
+    //erode( illuminationRM, illuminationRM, open_element );
     imshow("EQUALIZED", ~illuminationRM);
 }
 
@@ -67,8 +68,8 @@ void PupilLoc::isoPupil() {
     medianBlur(postProc, result_image, 7);
     imshow("AFTER FILTER", result_image);
     morphologyEx(result_image, result_image, MORPH_OPEN, open_element);
-    imshow("AFTER OPEN", result_image);
-    //morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
+    //imshow("AFTER OPEN", result_image);
+    morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
     //imshow("AFTER CLOSE", result_image);
 }
 
