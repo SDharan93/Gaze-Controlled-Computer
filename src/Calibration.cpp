@@ -66,7 +66,7 @@ string ParseText(){
 
 int** Calibrate()
 {
-    int** pupil_loc = new int*[calib_points];  //3 points: 1. center of screen   2.center top  3.center left
+    int** pupil_loc = new int*[calib_points];  //2 points: 1. top right   2. bot right
      int counter = 0,input = 1;
 
     namedWindow("const");
