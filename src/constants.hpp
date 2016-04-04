@@ -23,7 +23,7 @@ static String LIGHT_REMOVAL_NAME = "Light removal Window";
 
 static String FACE_CASCADE_NAME = "res/haarcascade_frontalface_alt.xml";
 static String EYE_CASCADE_NAME = "res/haarcascade_eye_tree_eyeglasses.xml";
-static String DEBUG_IMAGE_NAME = "res/image_12.png";
+static String DEBUG_IMAGE_NAME = "res/image-12.png";
 
 static string DEBUG = "debug";
 static char* LOCATION = "/dev/video0";
