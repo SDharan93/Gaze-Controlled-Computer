@@ -51,6 +51,10 @@ class Detect {
 
         //destory windows created for debugging. 
         void destroy_windows();
+
+        static Rect eye_crop;
+        static int search_count;
+        static bool search_flag;
     private:
         Mat face_image; 
         Mat eye_image;
@@ -64,4 +68,10 @@ class Detect {
 
         CascadeClassifier face_cascade;
         CascadeClassifier eye_cascade;
+
+        
 };
+
+//int Detect::search_count = 0;
+//bool Detect::search_flag = true;
+//Rect Detect::eye_crop = Rect(Point(0,0), Point(40,40));
