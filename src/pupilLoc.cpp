@@ -49,9 +49,12 @@ void PupilLoc::removeLight() {
     imshow("LIGHT", light);
     divide(temp, light, divided_image, 1, -1); 
     histoPeakIndex = histoPeak(temp);
-    illuminationRM = divided_image.mul(255);
-    equalizeHist(illuminationRM, illuminationRM);
-    //erode( illuminationRM, illuminationRM, open_element );
+    illuminationRM = divided_image.mul(histoPeakIndex);
+    //equalizeHist(illuminationRM, illuminationRM);
+
+    int erode_size = 3;
+    Mat erode_element = getStructuringElement(2, Size(2 * erode_size + 1, 2 * erode_size +1), Point(erode_size, erode_size));
+    erode( illuminationRM, illuminationRM, erode_element );
     imshow("EQUALIZED", ~illuminationRM);
 }
 
