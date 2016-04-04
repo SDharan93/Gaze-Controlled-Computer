@@ -27,8 +27,8 @@ static String DEBUG_IMAGE_NAME = "res/image-12-off.png";
 
 static string DEBUG = "debug";
 static char* LOCATION = "/dev/video0";
-static int WIDTH = 1280;
-static int HEIGHT = 720;
+static int WIDTH = 2688;
+static int HEIGHT = 1520;
 
 static int CLOSE_PROGRAM = 27; //esc
 static int DEBUG_WINDOWS = 100; //d

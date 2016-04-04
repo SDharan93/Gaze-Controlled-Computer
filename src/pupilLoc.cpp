@@ -41,12 +41,15 @@ void PupilLoc::removeLight() {
 
     //equalizeHist(ref_image, contrast);
     GaussianBlur(ref_image, temp, Size(3,3), 2,2);
+    imshow("NOISE REDUCTION", temp);
     //GaussianBlur(temp , light, Size(425, 425), 0, 0);
-    blur(temp, light, Size(191, 191));
+    blur(temp, light, Size(401, 401));
+    imshow("LIGHT", light);
     divide(ref_image, light, divided_image, 1, -1); 
     histoPeakIndex = histoPeak(ref_image);
-    illuminationRM = divided_image.mul(histoPeakIndex);
-    equalizeHist(illuminationRM, illuminationRM);
+    illuminationRM = divided_image.mul(255);
+    //equalizeHist(illuminationRM, illuminationRM);
+    imshow("EQUALIZED", ~illuminationRM);
 }
 
 void PupilLoc::isoPupil() {
@@ -57,13 +60,14 @@ void PupilLoc::isoPupil() {
 
     threshold(inv_ill, postProc, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
     imshow("OTSU THRESHOLD", postProc);
+    //imshow("THRESHOLD IMAGE", postProc);
 
     medianBlur(postProc, result_image, 7);
-    //imshow("AFTER FILTER", result_image);
-    //morphologyEx(result_image, result_image, MORPH_OPEN, open_element);
-    //imshow("AFTER OPEN", result_image);
-    //morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
-    //imshow("AFTER CLOSE", result_image);
+    imshow("AFTER FILTER", result_image);
+    morphologyEx(result_image, result_image, MORPH_OPEN, open_element);
+    imshow("AFTER OPEN", result_image);
+    morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
+    imshow("AFTER CLOSE", result_image);
 }
 
 void PupilLoc::highlightPupil() {

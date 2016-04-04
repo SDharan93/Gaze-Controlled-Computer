@@ -69,7 +69,8 @@ bool Detect::capture_image() {
 bool Detect::nv_capture_image() {
     Mat input, conversion, demosiac;
 
-    Rect myROI(320, 10, 720, 300);
+    //Rect myROI(320, 10, 720, 300)
+    Rect myROI(900, 300, 600, 450);
 
     input = Mat(imageSize, CV_16UC1, snapFrame());
     waitKey(75);
