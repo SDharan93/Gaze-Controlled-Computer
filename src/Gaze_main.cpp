@@ -42,8 +42,8 @@ int main(int argc, char** argv){
 
     int** calibration_box = Calibrate();
 
-    int image_width = 250;
-    int image_height = 250;
+    int image_width = 500;
+    int image_height = 500;
     int pupil_loc[2];
 
     while (true) {
