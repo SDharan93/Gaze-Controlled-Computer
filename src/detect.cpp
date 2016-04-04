@@ -76,6 +76,16 @@ bool Detect::nv_capture_image() {
     }
 }
 
+bool Detect::load_image(String image) {
+    video_image = imread(image);
+    if(video_image.empty()) {
+        cout << "COULD NOT LOAD IMAGE" << endl;
+        return false;
+    } else {
+        return true;
+    }
+}
+
 bool Detect::findFace(String face_cascade_name) {
     Mat gray_image;
     gray_image = get_red_channel(video_image);

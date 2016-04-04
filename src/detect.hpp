@@ -44,6 +44,8 @@ class Detect {
         //function to grab frame from camera on the Nvidia board/camera.
         bool nv_capture_image();
 
+        bool load_image(String image);
+
         //displays images used by detect for debugging. 
         void display_windows(); 
 
