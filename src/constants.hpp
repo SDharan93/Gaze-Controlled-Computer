@@ -38,3 +38,6 @@ static float alpha = 1.0625;
 
 static int Monitor_width = 1366;
 static int Monitor_height = 768;
+static int calib_points = 3;
+static int calibimg_width = 500;
+static int calibimg_height = 500;
