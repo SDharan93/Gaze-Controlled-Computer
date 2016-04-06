@@ -71,7 +71,7 @@ int main(int argc, char** argv){
      string str2 = "xdotool mousemove " + ss.str();
      const char * command = str2.c_str();
      cout << "command = " << command << endl;
-    system (command);
+  //  system (command);
 
   }
     return 1;
