@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <ctype.h>
+#include "v4ldevice.h"
+
 
 using namespace cv;
 using namespace std;
@@ -73,7 +75,11 @@ const char* keys =
 
 int main( int argc, const char** argv )
 {
-    VideoCapture cap;
+    //VideoCapture cap;
+    Size ImageSize;
+
+    ImageSize.width = 2688; 
+    ImageSize.height = 1520;
     Rect trackWindow;
     int hsize = 16;
     float hranges[] = {0,180};
@@ -85,16 +91,20 @@ int main( int argc, const char** argv )
         return 0;
     }
     int camNum = parser.get<int>(0);
-    cap.open(camNum);
+// tegra camera
+    open_device((char*)"/dev/video0");
+    init_device(ImageSize.width, ImageSize.height);
+    //cap.open(camNum);
+    start_capturing();
 
-    if( !cap.isOpened() )
+    /*if( !cap.isOpened() )
     {
         help();
         cout << "***Could not initialize capturing...***\n";
         cout << "Current parameter's value: \n";
         parser.printMessage();
         return -1;
-    }
+    }*/
     cout << hot_keys;
     namedWindow( "Histogram", 0 );
     namedWindow( "CamShift Demo", 0 );
@@ -110,16 +120,19 @@ int main( int argc, const char** argv )
     {
         if( !paused )
         {
-            cap >> frame;
+            frame = Mat(ImageSize, CV_16UC1, snapFrame());
+	    waitKey(75);
             if( frame.empty() )
                 break;
         }
-
-        frame.copyTo(image);
+	frame.convertTo(image, CV_8UC3, 1.0625, 10);
+	demosaicing(image, image, COLOR_BayerBG2RGB);
+        //frame.copyTo(image);
 
         if( !paused )
         {
             cvtColor(image, hsv, COLOR_BGR2HSV);
+
 
             if( trackObject )
             {
