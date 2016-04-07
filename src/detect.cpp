@@ -9,15 +9,16 @@ Rect rect;
 Mat cascade_search(String name, Mat video_image, Mat gray_image, int size, Mat saved_image);
 Mat get_red_channel(Mat source);
 
-
-    int Detect::search_count = 0;
-    bool Detect::search_flag = true;
-    Rect Detect::eye_crop = Rect(Point(0,0),Point(40,40));
+int Detect::search_count = 0;
+bool Detect::search_flag = true;
+Rect Detect::eye_crop = Rect(Point(0,0),Point(40,40));
     
+//captures the image from default camera device 
 Detect::Detect() {
     cap.open(0);
 }
 
+//captures the image for the Nvidia board
 Detect::Detect(char* dest, int width, int height) {
     open_device(dest);
     imageSize.width = width; 
@@ -25,9 +26,6 @@ Detect::Detect(char* dest, int width, int height) {
 
     init_device(width, height);
     start_capturing();
-
-    //Detect::search_count = 0;
-    //Detect::search_flag = true;
 }
 
 Mat Detect::get_face_image() {
@@ -50,6 +48,7 @@ Mat Detect::get_video_image() {
     return video_image;
 }
 
+//Take a frame from the video device
 bool Detect::capture_image() {
     if(!cap.isOpened()) {
         cout << "Could not open camera" << endl; 
@@ -65,10 +64,11 @@ bool Detect::capture_image() {
     return true;
 }
 
-//TODO: Implement the capture method for TK1 board.
+// Capture method for TK1 board.
 bool Detect::nv_capture_image() {
     Mat input, conversion, demosiac;
 
+    //Manually crop the image for easier processing 
     //Rect myROI(320, 10, 720, 300)
     Rect myROI(900, 300, 600, 450);
 
@@ -87,6 +87,7 @@ bool Detect::nv_capture_image() {
     }
 }
 
+//Debugging tool for processing the image 
 bool Detect::load_image(String image) {
     video_image = imread(image);
     if(video_image.empty()) {
@@ -171,6 +172,7 @@ void Detect::destroy_windows() {
     destroyWindow(EYE_WINDOW_NAME);
 }
 
+//abstract function for finding a feature in an image 
 Mat cascade_search(String name, Mat video_image, Mat search_image, int size, Mat saved_image) {
     Mat result;
     CascadeClassifier cascade;
@@ -192,6 +194,7 @@ Mat cascade_search(String name, Mat video_image, Mat search_image, int size, Mat
     return result;
 }
 
+//Find red channel of source(used for grayscaling)
 Mat get_red_channel(Mat source) {
     vector<Mat> rgb; 
     split(source, rgb);

@@ -14,6 +14,9 @@ PupilLoc::PupilLoc(Mat eye_image) {
     close_element = getStructuringElement(2, Size(2 * open_size + 1, 2 * open_size +1), Point(open_size, open_size));
 
     ref_image = eye_image.clone();
+
+    namedWindow(EYE_RESULT_NAME, CV_WINDOW_NORMAL);
+    moveWindow(EYE_RESULT_NAME, 1350, 600);
 }
 
 Mat PupilLoc::get_ref_image() {
@@ -36,46 +39,45 @@ Mat PupilLoc::get_postProc() {
     return postProc;
 }
 
+//Removes illumination variation from eye image 
 void PupilLoc::removeLight() {
     Mat light, divided_image, temp, contrast; 
 
-    //equalizeHist(ref_image, contrast);
-    //GaussianBlur(ref_image, temp, Size(3,3), 2,2);
-    //blur(ref_image, temp, Size(5, 5));
+    //removes noise from the image 
     bilateralFilter(ref_image, temp, 15, 75, 75);
     imshow("NOISE REDUCTION", temp);
-    //GaussianBlur(temp , light, Size(425, 425), 0, 0);
+    //captures the illumination variation of the image using a large kernal and LPF
     blur(temp, light, Size(315, 315));
-    imshow("LIGHT", light);
     divide(temp, light, divided_image, 1, -1); 
     histoPeakIndex = histoPeak(temp);
     illuminationRM = divided_image.mul(255);
     equalizeHist(illuminationRM, illuminationRM);
 
+    //erode the image to stop the blobs from merging 
     int erode_size = 3;
     Mat erode_element = getStructuringElement(2, Size(2 * erode_size + 1, 2 * erode_size +1), Point(erode_size, erode_size));
     erode( illuminationRM, illuminationRM, erode_element );
-    imshow("EQUALIZED", ~illuminationRM);
 }
 
+//Tries isolating the pupil from the eye image. 
 void PupilLoc::isoPupil() {
+    //Take the inverse of the image 
     Mat inv_ill = ~illuminationRM; 
-    imshow("INV REMOVAL", inv_ill);
-    //adaptiveThreshold(inv_ill, postProc, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY, 15, -5);
-    //imshow("THRESHOLD IMAGE", postProc);
 
+    //Using OTSU method for thresholding 
     threshold(inv_ill, postProc, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-    imshow("OTSU THRESHOLD", postProc);
-    //imshow("THRESHOLD IMAGE", postProc);
 
+    //Filters image to lower the number of edges in the image 
     medianBlur(postProc, result_image, 7);
-    imshow("AFTER FILTER", result_image);
+
+    //Morphological operations for isolating the pupil 
     morphologyEx(result_image, result_image, MORPH_OPEN, open_element);
     //imshow("AFTER OPEN", result_image);
     morphologyEx(result_image, result_image, MORPH_CLOSE, open_element);
     //imshow("AFTER CLOSE", result_image);
 }
 
+//Responsible for Blob Detection and showing the blob to the user 
 void PupilLoc::highlightPupil() {
     vector< vector<Point> > contours; 
     vector<Vec4i> hierarchy; 
@@ -90,17 +92,23 @@ void PupilLoc::highlightPupil() {
     //go through every contour 
     for(int i=0; i<contours.size(); i++) {
         double area = contourArea(contours[i], false);
+        //keep reference to the largest contour in the image 
         if(area > largest_area) {
             largest_area = area;
             largest_contour_index = i; 
-            bounding_rect = boundingRect(contours[i]); //find the bounding rectangle
+            //Rectangle for the largest blob
+            bounding_rect = boundingRect(contours[i]); 
         }
     }
 
     drawContours(ref_image, contours, largest_contour_index, Scalar(255), CV_FILLED, 8, hierarchy); 
+
+    //Draw a circle and pinpoint where the center of the blob is 
     int radius = bounding_rect.width/2;
     circle(ref_image, Point(bounding_rect.x+radius, bounding_rect.y+radius), radius, CV_RGB(255,0,0),2);
     cout << "POINTS: Y= " << bounding_rect.y+radius << " X= " << bounding_rect.x+radius << endl;
+    
+    //TODO: Move gaze communication to queue instead of file
     file.open("coordinates.txt", fstream::out | fstream::trunc);
     file << bounding_rect.y+radius << " " << bounding_rect.x+radius << endl;
     file.close();
@@ -114,10 +122,6 @@ void PupilLoc::display_windows() {
     if(!result_image.empty()) {
         imshow(POST_PROCESSES_NAME, result_image);
     }
-
-    if(!illuminationRM.empty()) {
-        imshow(LIGHT_REMOVAL_NAME, illuminationRM);
-    }
 }
 
 void PupilLoc::destory_windows() {
@@ -125,6 +129,7 @@ void PupilLoc::destory_windows() {
     destroyWindow(POST_PROCESSES_NAME);
 }
 
+//find the highest peak in the histogram
 int histoPeak(Mat image) {
     int histSize = 256; 
     float range[] = {0, 255};
