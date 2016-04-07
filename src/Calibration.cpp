@@ -8,7 +8,7 @@
 using namespace std;
 using namespace cv;
 
-#define DEBUG
+#define DEBUG2
 
 // Desgined to work using key press at the moment,
 int KeyPress(char input){
@@ -25,7 +25,7 @@ int KeyPress(char input){
         #ifdef DEBUG
           cout << "ESC" << endl;;
         #endif
-
+        exit(0);
         return 0;
       }
     }
@@ -48,10 +48,6 @@ string ParseText(){
     int a,b;
     if (iss >> a >> b) {
 
-      #ifdef DEBUG
-        cout << "read in " << line << endl;
-      #endif
-
         return line;
       }
   }
@@ -69,8 +65,12 @@ int** Calibrate()
     int** pupil_loc = new int*[calib_points];  //, botleft, midleft, topleft, midtop, center
      int counter = 0,input = 1;
 
-    namedWindow("const");
-    resizeWindow("const", 10,10);
+     cout << " number of points for calibration = " << calib_points << endl;
+
+    Mat img  = Mat::zeros(100,100, CV_8U);
+    namedWindow("calib");
+    resizeWindow("calib", 100,100);
+    imshow("calib", img);
 
     //TO DO; CALL PYTHON CALIB GUI
 
@@ -90,13 +90,15 @@ int** Calibrate()
               cout << "error during calib" << endl;
             }
 
-            #ifdef DEBUG2
+            #ifdef DEBUG
               cout << "row =" << row << " col=" << col << endl;
             #endif
 
             pupil_loc[counter] = new int [2];
             pupil_loc[counter][0] = row;
             pupil_loc[counter][1] = col;
+
+            cout << "Point " << counter +1 << " : " << pupil_loc[counter][0] << " " << pupil_loc[counter][1] << endl;
 
             counter++;
 
@@ -105,7 +107,7 @@ int** Calibrate()
 
       waitKey(0);
 
-      #ifdef DEBUG
+      #ifdef DEBUG2
         {
           cout << "the calib rect is ";
           for (int i =0; i <counter; i++){
@@ -115,6 +117,7 @@ int** Calibrate()
         }
       #endif
 
+      destroyAllWindows();
 
       return pupil_loc;
 

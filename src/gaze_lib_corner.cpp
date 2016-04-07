@@ -10,7 +10,7 @@ using namespace cv;
  //Returns the vertical scaling factor between input image and output monitor;
 double Scaley_corner(int row1, int row2){
   double scaley;
-   scaley = Monitor_height/((row2 - row1)*2) ; // Monitor_height stored in constants.hpp
+   scaley = (Monitor_height/2)/(row2 - row1) ; // Monitor_height stored in constants.hpp
 
    #ifdef DEBUG
      cout << "row1= " << row1 << " row2= " << row2 << " scaley= " << scaley << endl;
@@ -22,7 +22,7 @@ double Scaley_corner(int row1, int row2){
  //Returns the horizontal scaling factor between input image and output monitor;
 double Scalex_corner(int col1, int col2){
   double scalex;
-    scalex = Monitor_width/((col2 - col1)*2) ;// Monitor_width stored in constants.hpp
+    scalex = (Monitor_width/2)/(col2 - col1) ;// Monitor_width stored in constants.hpp
 
     #ifdef DEBUG
         cout << "col1= " << col1 << " col2= " << col2 << " scalex= " << scalex << endl;
@@ -50,7 +50,8 @@ void  Draw_Gaze_corner(int image_width, int image_height, int** boundary, int* p
       topboun_avg = (boundary [2][0] + boundary[3][0] + boundary [4][0])/3; // y dir
 
 
-        Rect rect(leftboun_avg, topboun_avg, (boundary[4][1]-boundary[2][1]), (boundary[0][0] - boundary[2][0]));
+     Rect rect(leftboun_avg, topboun_avg, (boundary[4][1]-leftboun_avg), (boundary[0][0] - topboun_avg));
+
         rectangle (gaze_img, rect,  CV_RGB(255,255,255), 1, 8, 0);
 
 
@@ -58,8 +59,10 @@ void  Draw_Gaze_corner(int image_width, int image_height, int** boundary, int* p
         cout << "done drawing left and right calibration box line"<< endl;
       #endif
 
-        gaze_img.at<uchar>(pupil_loc[0],pupil_loc[1]) = 250;
 
+      circle(gaze_img, Point(pupil_loc[1], pupil_loc[0]), 2, Scalar(255,255,255),-1,8,0);
+
+    
        imshow("gaze_img", gaze_img);
        waitKey(100);
 }
@@ -82,13 +85,6 @@ int * Cursor_Coordinates_corner(int image_width, int image_height, int** boundar
 
     int * cursor_loc  = new int[2] ;
     double scalex, scaley;
-/*
-    if ((pupil_loc[1] < boundary[0][1])|| (pupil_loc[1] > boundary[1][1])){
-      cout << "horizontally outside calibrated area" << endl;}
-    if ((pupil_loc[0] < boundary[0][0]) || (pupil_loc[0] > boundary[1][0])){
-      cout << "vert outside calibrated area" << endl;
-    }
-*/
 
      Draw_Gaze_corner(image_width, image_height, boundary, pupil_loc);
 
@@ -104,27 +100,20 @@ int * Cursor_Coordinates_corner(int image_width, int image_height, int** boundar
         cout<< "scale x = " << scalex << " scale y = " << scaley << endl;
      #endif
 
-     shiftfactor_y =  boundary[5][0]-topboun_avg;
-     shiftfactor_x = boundary[5][1] - leftboun_avg;
+     int gaze_row = pupil_loc[0] - topboun_avg;
+     int gaze_col = pupil_loc[1] - leftboun_avg;
 
 
-     cursor_loc[0] = (pupil_loc[0] - boundary[5][0] + shiftfactor_y)* scaley;
-     cursor_loc[1] = (pupil_loc[1] - boundary[5][1] + shiftfactor_x)* scalex;
+     cursor_loc[0] = gaze_row* scaley;
+     cursor_loc[1] = gaze_col* scalex;
 
      if (cursor_loc[0] < 0){
        cursor_loc[0] = 0;
      }
-  /*   else if (cursor_loc[0] > Monitor_height){
-       cursor_loc[0] = Monitor_height;
-     }*/
 
      if (cursor_loc[1] < 0){
        cursor_loc[1] = 0;
      }
-     /*else if (cursor_loc[1] > Monitor_width){
-       cursor_loc[1] = Monitor_width;
-     }*/
-
 
 
     #ifdef DEBUG

@@ -10,7 +10,6 @@
 #include "Calibration.hpp"
 #include "constants.hpp"
 #include "gaze_lib_corner.hpp"
-#include "gaze_lib.hpp"
 
 //#define DEBUG
 
@@ -42,8 +41,7 @@ string ParseText2(){
 
 int main(int argc, char** argv){
 
-
-    int** calibration_box = Calibrate();
+  int** calibration_box = Calibrate();
 
     int pupil_loc[2];
 
@@ -54,23 +52,19 @@ int main(int argc, char** argv){
         int row, col;
 
             if (!(iss >> pupil_loc[0] >> pupil_loc[1])) {
-              cout << "error during calib" << endl;
+              cout << "error in txt file" << endl;
             }
             #ifdef DEBUG
               cout << "row =" << pupil_loc[0] << " col=" << pupil_loc[1] << endl;
             #endif
 
-
-  //  int* cursor_loc = Cursor_Coordinates(calibimg_width, calibimg_height, calibration_box, pupil_loc);
      int* cursor_loc = Cursor_Coordinates_corner(calibimg_width, calibimg_height, calibration_box, pupil_loc);
-
-    //  cout << "move cursor loc  x:" << cursor_loc[1] << " y:" << cursor_loc[0] << endl;
 
      ostringstream ss;
      ss  << cursor_loc[1] <<  " " << cursor_loc[0];
      string str2 = "xdotool mousemove " + ss.str();
      const char * command = str2.c_str();
-     cout << "command = " << command << endl;
+
    system (command);
 
   }
