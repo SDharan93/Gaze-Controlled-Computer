@@ -37,31 +37,36 @@ void PupilDetect::run_pupil_detection(int argc, char** argv) {
     debug_flag = false; 
     tk1_flag = true; 
     initWindows();
+    //check if user wants to enter debug mode
     if(argc > 1){
     	if(DEBUG.compare(argv[1]) == 0) {
         	tk1_flag = false;
     	}
     }
+    //creates the correct object(Nvidia vs PC)
     Detect camera = factory_detect(tk1_flag);
 
     while(input != CLOSE_PROGRAM) {
+        //depending on the flag it will run either Nvidia code or PC
         if(tk1_flag) {
             tk1_runnable(camera, resultingImage);
         } else {
             debug_runnable(camera, resultingImage);
         }
+        //converts 8 bit input into a character 
         char input_char = (static_cast<char>(waitKey(75)));
         input = userInput(input_char);
     }
 }
 
+//runable function for PC...mainly used for debugging 
 void debug_runnable(Detect camera, Mat result) {
     //camera.capture_image();
     camera.load_image(DEBUG_IMAGE_NAME);
     camera.findEye(EYE_CASCADE_NAME);
-    //camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
     Mat eye_image = camera.get_eye_image();
 
+    //if the image loaded correctly...
     if(!eye_image.empty()) {
         PupilLoc locatePupil(eye_image);
         locatePupil.removeLight();
@@ -76,10 +81,10 @@ void debug_runnable(Detect camera, Mat result) {
     }
 }
 
+//runnable function for the Nvidia TK1 Board
 void tk1_runnable(Detect camera, Mat result) {
     camera.nv_capture_image();
     camera.findEye(EYE_CASCADE_NAME);
-    //camera.findFeatures(FACE_CASCADE_NAME, EYE_CASCADE_NAME);
     Mat eye_image = camera.get_eye_image();
 
     if(!eye_image.empty()) {
@@ -112,6 +117,7 @@ void destoryWindows() {
     destroyAllWindows();
 }
 
+//opens additional windows for debugging purposes (If the pupil was located) 
 void debug(Detect camera, PupilLoc pupil) {
     if(debug_flag) {
         camera.display_windows();
@@ -122,6 +128,7 @@ void debug(Detect camera, PupilLoc pupil) {
     }
 }
 
+//opens additional windows for debugging without pupil detection
 void debug(Detect camera) {
     if(debug_flag) {
         camera.display_windows();
@@ -145,6 +152,7 @@ int userInput(char input) {
     }
 }
 
+//factory for creating either pc capture or Nvidia capture object 
 Detect factory_detect(bool debug) {
     if(debug) {
         Detect detect(LOCATION, WIDTH, HEIGHT);
