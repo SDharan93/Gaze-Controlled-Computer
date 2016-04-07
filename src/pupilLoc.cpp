@@ -42,10 +42,10 @@ void PupilLoc::removeLight() {
     //equalizeHist(ref_image, contrast);
     //GaussianBlur(ref_image, temp, Size(3,3), 2,2);
     //blur(ref_image, temp, Size(5, 5));
-    bilateralFilter(ref_image, temp, 15, 45, 45);
+    bilateralFilter(ref_image, temp, 15, 75, 75);
     imshow("NOISE REDUCTION", temp);
     //GaussianBlur(temp , light, Size(425, 425), 0, 0);
-    blur(temp, light, Size(509, 509));
+    blur(temp, light, Size(315, 315));
     imshow("LIGHT", light);
     divide(temp, light, divided_image, 1, -1); 
     histoPeakIndex = histoPeak(temp);
