@@ -2,17 +2,22 @@
 
 A computer mouse that is controlled from where you look on the screen! This project was done for our engineering capstone project, applying our knowledge of hardware, software design, image processing and sensors. The gaze controlled mouse uses a simple gaze estimation algorithm to estimate the user's approximate gaze on screen and moves the mouse accordingly. 
 
-The gaze controlled mouse was primarily created for a proof of concept and should not be assumed to be a viable replacement for your mouse currently. The application is tested on the Dragonboard 410C and cannot garuntee full functionality on other systems. 
+The gaze controlled mouse was primarily created for a proof of concept and should not be assumed to be a viable replacement for your mouse currently. The application is tested on the Nvidia TK1 and cannot garuntee full functionality on other systems. 
 
-### Prerequisities
+## Motivation 
+
+All members of the design team are constantly on our computers and avid gamers! The team realized that the mouse cannot be the best option to control the computer cursor since it is the leading cause of wrist and shoulder pains. As such we decided to make a device that controls the cursor via gaze (we already look to where we want to move our cursor already)!
+
+## Prerequisities
 
 To run the application correctly, please have the following available: 
 * OpenCV
 * CMake (Version 2.8)
 * Camera
-* Linux Distro
+* Linux Distro (Tested on Ubuntu)
 * Flex sensor
-* Nvidia TK1 (Optional) 
+* Arduino (Tested on Uno)
+* Nvidia TK1  
 
 ## Installation
 
@@ -36,6 +41,8 @@ To run the application, run the following:
 
 * OpenCV - Image Processing Library
 * Nvidia TK1 - Platform for controlling mouse pointer with gaze
+* Flex Sensor - The sensor used to control the clicking actions
+* Arduino Uno - Used as a median of communication between the Nvidia TK1 and Flex Sensor 
 
 ## Authors
 
@@ -46,4 +53,4 @@ To run the application, run the following:
 
 ## Acknowledgments
 
-* **Dr.April Khademi** - *Group Advisor* - Advisor and Mentor to the group. Provided amazing support to the group and motivated the group to strive for the best.
+* **Dr.April Khademi** - *Group Advisor* - Advisor and Mentor to the group. Provided amazing support to the group and motivated us to strive for the best.
