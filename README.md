@@ -8,6 +8,8 @@ The gaze controlled mouse was primarily created for a proof of concept and shoul
 
 All members of the design team are constantly on our computers and avid gamers! The team realized that the mouse cannot be the best option to control the computer cursor since it is the leading cause of wrist and shoulder pains. As such we decided to make a device that controls the cursor via gaze (we already look to where we want to move our cursor already)!
 
+For a detailed report on this project [click here](https://google.com). <- The actual link will be updated once the design course is completed.
+
 ## Prerequisities
 
 To run the application correctly, please have the following available: 
