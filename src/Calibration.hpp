@@ -5,5 +5,5 @@ using namespace std;
 
 
 int KeyPress(char input);
+string ParseText_Calib();
 int** Calibrate();
-string ParseText();
